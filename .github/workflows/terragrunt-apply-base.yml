@@ -52,6 +52,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::794722365809:role/gh_admin_role
+          role-session-name: TFApply
           aws-region: "ca-central-1"
 
       - name: Terragrunt apply base

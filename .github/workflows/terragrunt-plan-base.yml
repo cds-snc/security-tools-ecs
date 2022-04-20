@@ -50,6 +50,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::794722365809:role/gh_plan_role
+          role-session-name: TFPlan
           aws-region: "ca-central-1"
 
       - name: Terragrunt plan base
