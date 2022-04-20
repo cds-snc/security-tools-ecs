@@ -1,7 +1,6 @@
 name: "Terragrunt apply base"
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
