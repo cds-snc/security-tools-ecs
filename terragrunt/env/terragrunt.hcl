@@ -1,8 +1,11 @@
 inputs = {
-  account_id        = "${get_aws_account_id()}"
-  billing_tag_key   = "CostCentre"
-  billing_tag_value = "security-tools-${get_aws_account_id()}"
-  region            = "ca-central-1"
+  account_id           = "${get_aws_account_id()}"
+  domain_name          = "security.cdssandbox.xyz"
+  internal_domain_name = "${get_aws_account_id()}.local"
+  product_name         = "security-tools"
+  billing_tag_key      = "CostCentre"
+  billing_tag_value    = "security-tools-${get_aws_account_id()}"
+  region               = "ca-central-1"
 }
 
 remote_state {
