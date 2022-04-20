@@ -3,11 +3,6 @@
   "build": {
     "dockerfile": "Dockerfile",
     "context": "..",
-    "args": {
-      "AWS_CLI_VERSION": "2.5.6",
-      "TERRAFORM_VERSION": "1.1.9",
-      "TERRAGRUNT_VERSION": "0.36.7"
-    }
   },
   "containerEnv": {
     "SHELL": "/bin/zsh"
@@ -18,11 +13,19 @@
     }
   },
   "features": {
-		"docker-from-docker": {
-			"version": "latest",
-			"moby": true
-		}
-	},
+    "docker-from-docker": {
+      "version": "latest",
+      "moby": true
+    },
+    "terraform": {
+      "version": "1.1.9",
+      "tflint": "latest",
+      "terragrunt": "0.36.7"
+    },
+    "features": {
+      "aws-cli": "2.5.6"
+    }
+  },
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
     "hashicorp.terraform",
