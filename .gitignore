@@ -1,0 +1,9 @@
+.terraform*
+*.tfstate*
+*.env
+
+.DS_Store
+
+# Python
+.pytest_cache
+__pycache__
