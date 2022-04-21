@@ -41,27 +41,11 @@ resource "aws_security_group" "pomerium" {
   }
 
   ingress {
-    description = "Access from proxy"
+    description = "Access from proxy to pomerium auth"
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "Allow API outbound connections to the internet"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "TCP"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "Allow API outbound connections to the internet"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "TCP"
-    cidr_blocks = ["0.0.0.0/0"]
+    self        = true
   }
 
   egress {
@@ -69,7 +53,7 @@ resource "aws_security_group" "pomerium" {
     from_port   = 8000
     to_port     = 8000
     protocol    = "TCP"
-    cidr_blocks = ["0.0.0.0/0"]
+    self        = true
   }
 
   tags = {

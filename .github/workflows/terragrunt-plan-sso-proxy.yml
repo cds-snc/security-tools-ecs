@@ -65,7 +65,7 @@ jobs:
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "terragrunt/env/sso_proxy"
-          comment-delete: "false"
+          comment-delete: "true"
           comment-title: "sso_proxy"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
