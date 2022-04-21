@@ -1,65 +1,67 @@
-{
-  "name" : "pomerium_sso_proxy",
-  "cpu" : 0,
-  "environment" : [
-    {
-      "name" : "POLICY",
-      "value" : "${POLICY_FILE}"
+[
+  {
+    "name" : "pomerium_sso_proxy",
+    "cpu" : 0,
+    "environment" : [
+      {
+        "name" : "POLICY",
+        "value" : "${POLICY_FILE}"
+      },
+      {
+        "name" : "IDP_PROVIDER",
+        "value" : "google"
+      },
+      {
+        "name" : "AUTHENTICATE_SERVICE_URL",
+        "value" : "${AUTHENTICATE_SERVICE_URL}"
+      },
+      {
+        "name" : "AUTOCERT",
+        "value" : "FALSE"
+      },
+      {
+        "name" : "INSECURE_SERVER",
+        "value" : "true"
+      },
+      {
+        "name" : "LOG_LEVEL",
+        "value" : "debug"
+      },
+    ],
+    "essential" : true,
+    "image" : "${POMERIUM_IMAGE}",
+    "logConfiguration" : {
+      "logDriver" : "awslogs",
+      "options" : {
+          "awslogs-group": "${AWS_LOGS_GROUP}",
+          "awslogs-region": "${AWS_LOGS_REGION}",
+          "awslogs-stream-prefix": "${AWS_LOGS_STREAM_PREFIX}"
+      }
     },
-    {
-      "name" : "IDP_PROVIDER",
-      "value" : "google"
-    },
-    {
-      "name" : "AUTHENTICATE_SERVICE_URL",
-      "value" : "${AUTHENTICATE_SERVICE_URL}"
-    },
-    {
-      "name" : "AUTOCERT",
-      "value" : "FALSE"
-    },
-    {
-      "name" : "INSECURE_SERVER",
-      "value" : "true"
-    },
-    {
-      "name" : "LOG_LEVEL",
-      "value" : "debug"
-    },
-  ],
-  "essential" : true,
-  "image" : "${POMERIUM_IMAGE}",
-  "logConfiguration" : {
-    "logDriver" : "awslogs",
-    "options" : {
-        "awslogs-group": "${AWS_LOGS_GROUP}",
-        "awslogs-region": "${AWS_LOGS_REGION}",
-        "awslogs-stream-prefix": "${AWS_LOGS_STREAM_PREFIX}"
-    }
-  },
-  "portMappings" : [
-    {
-      "hostPort" : 443,
-      "ContainerPort" : 443,
-      "Protocol" : "tcp"
-    }
-  ],
-  "secrets" : [
-    {
-      "name" : "SHARED_SECRET",
-      "valueFrom" : "${POMERIUM_CLIENT_ID}"
-    },
-    {
-      "name" : "COOKIE_SECRET",
-      "valueFrom" : "${POMERIUM_CLIENT_SECRET}"
-    },
-    {
-      "name" : "IDP_CLIENT_ID",
-      "valueFrom" : "${POMERIUM_GOOGLE_CLIENT_ID}"
-    },
-    {
-      "name" : "IDP_CLIENT_SECRET",
-      "valueFrom" : "${POMERIUM_GOOGLE_CLIENT_SECRET}"
-    },
-  ],
-}
+    "portMappings" : [
+      {
+        "hostPort" : 443,
+        "ContainerPort" : 443,
+        "Protocol" : "tcp"
+      }
+    ],
+    "secrets" : [
+      {
+        "name" : "SHARED_SECRET",
+        "valueFrom" : "${POMERIUM_CLIENT_ID}"
+      },
+      {
+        "name" : "COOKIE_SECRET",
+        "valueFrom" : "${POMERIUM_CLIENT_SECRET}"
+      },
+      {
+        "name" : "IDP_CLIENT_ID",
+        "valueFrom" : "${POMERIUM_GOOGLE_CLIENT_ID}"
+      },
+      {
+        "name" : "IDP_CLIENT_SECRET",
+        "valueFrom" : "${POMERIUM_GOOGLE_CLIENT_SECRET}"
+      },
+    ],
+  }
+]
