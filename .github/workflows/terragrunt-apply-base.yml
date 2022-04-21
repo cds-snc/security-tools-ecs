@@ -52,7 +52,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::794722365809:role/gh_admin_role
           role-session-name: TFApply
-          aws-region: "ca-central-1"
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Terragrunt apply base
         if: ${{ steps.filter.outputs.base == 'true' || steps.filter.outputs.common == 'true' }}
