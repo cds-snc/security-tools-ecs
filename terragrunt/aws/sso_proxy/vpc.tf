@@ -79,22 +79,12 @@ resource "aws_security_group" "pomerium" {
   }
 }
 
-resource "aws_flow_log" "pomerium" {
-  iam_role_arn    = aws_iam_role.pomerium_task_execution_role.arn
-  log_destination = aws_cloudwatch_log_group.pomerium_flow_log.arn
-  traffic_type    = "ALL"
-  vpc_id          = module.vpc.vpc_id
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-    Product               = var.product_name
-  }
-}
-
-resource "aws_cloudwatch_log_group" "pomerium_flow_log" {
-  name              = "pomerium_flow_log"
-  retention_in_days = 14
+resource "aws_flow_log" "cloud-based-sensor" {
+  log_destination      = "arn:aws:s3:::${var.cbs_satellite_bucket_name}/vpc_flow_logs/"
+  log_destination_type = "s3"
+  traffic_type         = "ALL"
+  vpc_id               = module.vpc.vpc_id
+  log_format           = "$${vpc-id} $${version} $${account-id} $${interface-id} $${srcaddr} $${dstaddr} $${srcport} $${dstport} $${protocol} $${packets} $${bytes} $${start} $${end} $${action} $${log-status} $${subnet-id} $${instance-id}"
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
