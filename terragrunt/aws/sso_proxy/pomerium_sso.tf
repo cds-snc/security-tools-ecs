@@ -43,6 +43,23 @@ resource "aws_ecs_service" "pomerium_sso_proxy" {
   }
 }
 
+data "template_file" "pomerium_sso_proxy_container_definition" {
+  template = file("container-definitions/pomerium_sso_proxy.json.tmpl")
+
+  vars = {
+    AUTHENTICATE_SERVICE_URL      = "https://auth.${var.domain_name}"
+    AWS_LOGS_GROUP                = aws_cloudwatch_log_group.pomerium_sso_proxy.name
+    AWS_LOGS_REGION               = var.region
+    AWS_LOGS_STREAM_PREFIX        = "${aws_ecs_cluster.pomerium_sso_proxy.name}-task"
+    POLICY_FILE                   = base64encode(file(local.policy_file))
+    POMERIUM_CLIENT_ID            = aws_ssm_parameter.pomerium_client_id.arn
+    POMERIUM_CLIENT_SECRET        = aws_ssm_parameter.pomerium_client_secret.arn
+    POMERIUM_GOOGLE_CLIENT_ID     = aws_ssm_parameter.pomerium_google_client_id.arn
+    POMERIUM_GOOGLE_CLIENT_SECRET = aws_ssm_parameter.pomerium_google_client_secret.arn
+    POMERIUM_IMAGE                = "${var.pomerium_image}:${var.pomerium_image_tag}"
+  }
+}
+
 resource "aws_ecs_task_definition" "pomerium_sso_proxy" {
   family                   = "pomerium_sso_proxy"
   network_mode             = "awsvpc"
@@ -54,73 +71,7 @@ resource "aws_ecs_task_definition" "pomerium_sso_proxy" {
   execution_role_arn = aws_iam_role.pomerium_container_execution_role.arn
   task_role_arn      = aws_iam_role.pomerium_task_execution_role.arn
 
-  container_definitions = jsonencode([
-    {
-      "name" : "pomerium_sso_proxy",
-      "cpu" : 0,
-      "environment" : [
-        {
-          "name" : "POLICY",
-          "value" : base64encode(file(local.policy_file))
-        },
-        {
-          "name" : "IDP_PROVIDER",
-          "value" : "google"
-        },
-        {
-          "name" : "AUTHENTICATE_SERVICE_URL",
-          "value" : "https://auth.${var.domain_name}"
-        },
-        {
-          "name" : "AUTOCERT",
-          "value" : "FALSE"
-        },
-        {
-          "name" : "INSECURE_SERVER",
-          "value" : "true"
-        },
-        {
-          "name" : "LOG_LEVEL",
-          "value" : "debug"
-        },
-      ],
-      "essential" : true,
-      "image" : "pomerium/pomerium:git-74310b3d",
-      "logConfiguration" : {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.pomerium_sso_proxy.name,
-          "awslogs-region" : var.region,
-          "awslogs-stream-prefix" : "ecs-pomerium"
-        }
-      },
-      "portMappings" : [
-        {
-          "hostPort" : 443,
-          "ContainerPort" : 443,
-          "Protocol" : "tcp"
-        }
-      ],
-      "secrets" : [
-        {
-          "name" : "SHARED_SECRET",
-          "valueFrom" : aws_ssm_parameter.pomerium_client_id.arn
-        },
-        {
-          "name" : "COOKIE_SECRET",
-          "valueFrom" : aws_ssm_parameter.pomerium_client_secret.arn
-        },
-        {
-          "name" : "IDP_CLIENT_ID",
-          "valueFrom" : aws_ssm_parameter.pomerium_google_client_id.arn
-        },
-        {
-          "name" : "IDP_CLIENT_SECRET",
-          "valueFrom" : aws_ssm_parameter.pomerium_google_client_secret.arn
-        },
-      ],
-    },
-  ])
+  container_definitions = data.template_file.pomerium_sso_proxy_container_definition.rendered
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
