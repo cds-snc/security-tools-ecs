@@ -182,14 +182,10 @@ resource "aws_kinesis_firehose_delivery_stream" "sso_proxy_waf" {
   }
 
   extended_s3_configuration {
-    role_arn   = aws_iam_role.waf_log_role.arn
-    prefix     = "waf/${var.product_name}/"
-    bucket_arn = module.log_bucket.s3_bucket_arn
-    cloudwatch_logging_options {
-      enabled         = true
-      log_group_name  = aws_cloudwatch_log_group.sso_proxy_waf.name
-      log_stream_name = "WAFLogS3Delivery"
-    }
+    role_arn           = aws_iam_role.waf_log_role.arn
+    prefix             = "waf_acl_logs/AWSLogs/${var.account_id}/"
+    bucket_arn         = "arn:aws:s3:::${var.cbs_satellite_bucket_name}"
+    compression_format = "GZIP"
   }
 
   tags = {

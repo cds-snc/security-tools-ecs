@@ -130,27 +130,18 @@ data "aws_iam_policy_document" "firehose_assume_role" {
 
 data "aws_iam_policy_document" "write_waf_logs" {
   statement {
+    sid    = "S3PutObjects"
     effect = "Allow"
-
     actions = [
+      "s3:AbortMultipartUpload",
+      "s3:GetBucketLocation",
+      "s3:GetObject",
       "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+      "s3:PutObject"
     ]
-
     resources = [
-      module.log_bucket.s3_bucket_arn
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:GetObject*",
-      "s3:PutObject*",
-    ]
-
-    resources = [
-      "${module.log_bucket.s3_bucket_arn}/waf/*"
+      "arn:aws:s3:::${var.cbs_satellite_bucket_name}/*"
     ]
   }
 }
