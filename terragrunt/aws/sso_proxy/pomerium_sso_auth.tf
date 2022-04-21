@@ -1,5 +1,5 @@
-resource "aws_ecs_cluster" "pomerium_auth" {
-  name = "pomerium_auth"
+resource "aws_ecs_cluster" "pomerium_sso_proxy_auth" {
+  name = "pomerium_sso_proxy_auth"
 
   setting {
     name  = "containerInsights"
@@ -7,10 +7,10 @@ resource "aws_ecs_cluster" "pomerium_auth" {
   }
 }
 
-resource "aws_ecs_service" "pomerium_auth" {
-  name            = "pomerium_auth"
-  cluster         = aws_ecs_cluster.pomerium_auth.id
-  task_definition = aws_ecs_task_definition.pomerium_auth.arn
+resource "aws_ecs_service" "pomerium_sso_proxy_auth" {
+  name            = "pomerium_sso_proxy_auth"
+  cluster         = aws_ecs_cluster.pomerium_sso_proxy_auth.id
+  task_definition = aws_ecs_task_definition.pomerium_sso_proxy_auth.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
@@ -24,8 +24,8 @@ resource "aws_ecs_service" "pomerium_auth" {
   }
 }
 
-resource "aws_ecs_task_definition" "pomerium_auth" {
-  family                   = "pomerium_auth"
+resource "aws_ecs_task_definition" "pomerium_sso_proxy_auth" {
+  family                   = "pomerium_sso_proxy_auth"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
@@ -37,7 +37,7 @@ resource "aws_ecs_task_definition" "pomerium_auth" {
 
   container_definitions = jsonencode([
     {
-      "name" : "pomerium_auth",
+      "name" : "pomerium_sso_proxy_auth",
       "cpu" : 0,
       "environment" : [
         {
@@ -54,7 +54,7 @@ resource "aws_ecs_task_definition" "pomerium_auth" {
       "logConfiguration" : {
         "logDriver" : "awslogs",
         "options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.pomerium_auth.name,
+          "awslogs-group" : aws_cloudwatch_log_group.pomerium_sso_proxy_auth.name,
           "awslogs-region" : var.region,
           "awslogs-stream-prefix" : "ecs-pomerium_auth"
         }
@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "pomerium_auth" {
   ])
 }
 
-resource "aws_cloudwatch_log_group" "pomerium_auth" {
-  name              = "/aws/ecs/pomerium_auth"
+resource "aws_cloudwatch_log_group" "pomerium_sso_proxy_auth" {
+  name              = "/aws/ecs/pomerium_sso_proxy_auth"
   retention_in_days = 14
 }

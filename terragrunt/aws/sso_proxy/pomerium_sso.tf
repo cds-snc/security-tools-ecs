@@ -2,8 +2,8 @@ locals {
   policy_file = "configs/policy.yml"
 }
 
-resource "aws_ecs_cluster" "pomerium" {
-  name = "pomerium"
+resource "aws_ecs_cluster" "pomerium_sso_proxy" {
+  name = "pomerium_sso_proxy"
 
   setting {
     name  = "containerInsights"
@@ -11,17 +11,17 @@ resource "aws_ecs_cluster" "pomerium" {
   }
 }
 
-resource "aws_ecs_service" "pomerium" {
-  name                              = "pomerium"
-  cluster                           = aws_ecs_cluster.pomerium.id
-  task_definition                   = aws_ecs_task_definition.pomerium.arn
+resource "aws_ecs_service" "pomerium_sso_proxy" {
+  name                              = "pomerium_sso_proxy"
+  cluster                           = aws_ecs_cluster.pomerium_sso_proxy.id
+  task_definition                   = aws_ecs_task_definition.pomerium_sso_proxy.arn
   desired_count                     = 1
   launch_type                       = "FARGATE"
   health_check_grace_period_seconds = 600
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs.arn
-    container_name   = "pomerium"
+    container_name   = "pomerium_sso_proxy"
     container_port   = 443
   }
 
@@ -31,8 +31,8 @@ resource "aws_ecs_service" "pomerium" {
   }
 }
 
-resource "aws_ecs_task_definition" "pomerium" {
-  family                   = "pomerium"
+resource "aws_ecs_task_definition" "pomerium_sso_proxy" {
+  family                   = "pomerium_sso_proxy"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "pomerium" {
 
   container_definitions = jsonencode([
     {
-      "name" : "pomerium",
+      "name" : "pomerium_sso_proxy",
       "cpu" : 0,
       "environment" : [
         {
@@ -77,7 +77,7 @@ resource "aws_ecs_task_definition" "pomerium" {
       "logConfiguration" : {
         "logDriver" : "awslogs",
         "options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.pomerium.name,
+          "awslogs-group" : aws_cloudwatch_log_group.pomerium_sso_proxy.name,
           "awslogs-region" : var.region,
           "awslogs-stream-prefix" : "ecs-pomerium"
         }
@@ -111,12 +111,7 @@ resource "aws_ecs_task_definition" "pomerium" {
   ])
 }
 
-resource "aws_cloudwatch_log_group" "pomerium" {
-  name              = "/aws/ecs/pomerium"
-  retention_in_days = 14
-}
-
-resource "aws_cloudwatch_log_group" "init_sso" {
-  name              = "/aws/ecs/init_sso"
+resource "aws_cloudwatch_log_group" "pomerium_sso_proxy" {
+  name              = "/aws/ecs/pomerium_sso_proxy"
   retention_in_days = 14
 }
