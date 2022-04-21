@@ -6,7 +6,7 @@ inputs = {
   billing_tag_key           = "CostCentre"
   billing_tag_value         = "security-tools-${get_aws_account_id()}"
   region                    = "ca-central-1"
-  cbs_satellite_bucket_name = "cbs-satellite-${local.vars.inputs.account_id}"
+  cbs_satellite_bucket_name = "cbs-satellite-${get_aws_account_id()}"
 }
 
 remote_state {
