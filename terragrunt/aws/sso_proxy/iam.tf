@@ -6,6 +6,12 @@
 resource "aws_iam_role" "pomerium_task_execution_role" {
   name               = "pomerium_execution_role"
   assume_role_policy = data.aws_iam_policy_document.pomerium_task_execution_role.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 data "aws_iam_policy_document" "pomerium_task_execution_role" {
@@ -71,6 +77,12 @@ resource "aws_iam_policy" "pomerium_policies" {
   name   = "PomeriumSSOTaskExecutionPolicies"
   path   = "/"
   policy = data.aws_iam_policy_document.pomerium_policies.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 ### WAF IAM role

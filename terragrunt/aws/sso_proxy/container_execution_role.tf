@@ -7,6 +7,12 @@
 resource "aws_iam_role" "pomerium_container_execution_role" {
   name               = "container_execution_role"
   assume_role_policy = data.aws_iam_policy_document.pomerium_container_execution_role.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "ce_cs" {

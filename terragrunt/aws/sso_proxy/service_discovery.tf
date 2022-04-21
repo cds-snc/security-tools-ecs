@@ -2,6 +2,12 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
   name        = var.internal_domain_name
   description = "internal domain for all services"
   vpc         = module.vpc.vpc_id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_service_discovery_service" "auth" {
@@ -20,5 +26,11 @@ resource "aws_service_discovery_service" "auth" {
 
   health_check_custom_config {
     failure_threshold = 5
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
   }
 }

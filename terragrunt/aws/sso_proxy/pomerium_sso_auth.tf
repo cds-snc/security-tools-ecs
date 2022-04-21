@@ -5,6 +5,12 @@ resource "aws_ecs_cluster" "pomerium_sso_proxy_auth" {
     name  = "containerInsights"
     value = "enabled"
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_ecs_service" "pomerium_sso_proxy_auth" {
@@ -21,6 +27,12 @@ resource "aws_ecs_service" "pomerium_sso_proxy_auth" {
   network_configuration {
     security_groups = [aws_security_group.pomerium.id]
     subnets         = module.vpc.private_subnet_ids
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
   }
 }
 
@@ -86,9 +98,21 @@ resource "aws_ecs_task_definition" "pomerium_sso_proxy_auth" {
       ],
     },
   ])
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_cloudwatch_log_group" "pomerium_sso_proxy_auth" {
   name              = "/aws/ecs/pomerium_sso_proxy_auth"
   retention_in_days = 14
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }

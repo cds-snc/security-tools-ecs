@@ -109,6 +109,12 @@ resource "aws_security_group" "pomerium" {
     protocol    = "TCP"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_flow_log" "pomerium" {
@@ -116,9 +122,21 @@ resource "aws_flow_log" "pomerium" {
   log_destination = aws_cloudwatch_log_group.pomerium_flow_log.arn
   traffic_type    = "ALL"
   vpc_id          = module.vpc.vpc_id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_cloudwatch_log_group" "pomerium_flow_log" {
   name              = "pomerium_flow_log"
   retention_in_days = 14
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
