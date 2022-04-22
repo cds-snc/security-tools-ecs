@@ -42,6 +42,11 @@ variable "pomerium_verify_image_tag" {
   type        = string
 }
 
+variable "session_cookie_expires_in" {
+  description = "The duration the pomerium session cookie should last"
+  type        = string
+}
+
 variable "session_cookie_secret" {
   description = "The pomerium seed string for secure cookies"
   type        = string
