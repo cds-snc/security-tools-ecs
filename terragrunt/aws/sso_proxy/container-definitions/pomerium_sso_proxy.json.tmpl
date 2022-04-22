@@ -3,14 +3,6 @@
     "name" : "pomerium_sso_proxy",
     "environment" : [
       {
-        "name" : "ROUTES",
-        "value" : "${ROUTES_FILE}"
-      },
-      {
-        "name" : "IDP_PROVIDER",
-        "value" : "google"
-      },
-      {
         "name" : "AUTHENTICATE_SERVICE_URL",
         "value" : "${AUTHENTICATE_SERVICE_URL}"
       },
@@ -19,12 +11,24 @@
         "value" : "FALSE"
       },
       {
+        "name" : "COOKIE_EXPIRE",
+        "value" : "${COOKIE_EXPIRE}"
+      },
+      {
+        "name" : "IDP_PROVIDER",
+        "value" : "google"
+      },
+      {
         "name" : "INSECURE_SERVER",
         "value" : "true"
       },
       {
         "name" : "LOG_LEVEL",
         "value" : "debug"
+      },
+      {
+        "name" : "ROUTES",
+        "value" : "${ROUTES_FILE}"
       }
     ],
     "essential" : true,

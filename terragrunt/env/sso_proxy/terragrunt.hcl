@@ -7,6 +7,7 @@ inputs = {
   pomerium_image_tag        = "git-74310b3d"
   pomerium_verify_image     = "pomerium/verify"
   pomerium_verify_image_tag = "sha-6b38dd5"
+  session_cookie_expires_in = "8h"
 }
 
 include {

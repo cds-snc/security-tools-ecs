@@ -51,6 +51,7 @@ data "template_file" "pomerium_sso_proxy_container_definition" {
     AWS_LOGS_GROUP                = aws_cloudwatch_log_group.pomerium_sso_proxy.name
     AWS_LOGS_REGION               = var.region
     AWS_LOGS_STREAM_PREFIX        = "${aws_ecs_cluster.pomerium_sso_proxy.name}-task"
+    COOKIE_EXPIRE                 = var.session_cookie_expires_in
     ROUTES_FILE                   = base64encode(file(local.routes_file))
     POMERIUM_CLIENT_ID            = aws_ssm_parameter.pomerium_client_id.arn
     POMERIUM_CLIENT_SECRET        = aws_ssm_parameter.pomerium_client_secret.arn
