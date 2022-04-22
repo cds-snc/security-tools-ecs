@@ -1,5 +1,5 @@
 locals {
-  policy_file = "configs/routes.yml"
+  routes_file = "configs/routes.yml"
 }
 
 resource "aws_ecs_cluster" "pomerium_sso_proxy" {
