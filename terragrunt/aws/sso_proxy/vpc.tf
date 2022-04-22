@@ -32,8 +32,16 @@ resource "aws_security_group" "pomerium" {
   vpc_id      = module.vpc.vpc_id
 
 
+  egress {
+    description = "Access to the internet"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
-    description = "Access to load balancer"
+    description = "Access to load balancer from the internet"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
