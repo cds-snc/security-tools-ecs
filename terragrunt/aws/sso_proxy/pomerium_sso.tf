@@ -1,5 +1,5 @@
 locals {
-  policy_file = "configs/policy.yml"
+  policy_file = "configs/routes.yml"
 }
 
 resource "aws_ecs_cluster" "pomerium_sso_proxy" {
@@ -51,7 +51,7 @@ data "template_file" "pomerium_sso_proxy_container_definition" {
     AWS_LOGS_GROUP                = aws_cloudwatch_log_group.pomerium_sso_proxy.name
     AWS_LOGS_REGION               = var.region
     AWS_LOGS_STREAM_PREFIX        = "${aws_ecs_cluster.pomerium_sso_proxy.name}-task"
-    POLICY_FILE                   = base64encode(file(local.policy_file))
+    ROUTES_FILE                   = base64encode(file(local.routes_file))
     POMERIUM_CLIENT_ID            = aws_ssm_parameter.pomerium_client_id.arn
     POMERIUM_CLIENT_SECRET        = aws_ssm_parameter.pomerium_client_secret.arn
     POMERIUM_GOOGLE_CLIENT_ID     = aws_ssm_parameter.pomerium_google_client_id.arn
