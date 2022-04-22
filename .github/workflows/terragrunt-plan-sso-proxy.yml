@@ -5,8 +5,8 @@ on:
   pull_request:
     paths:
       - ".github/workflows/terragrunt-plan-sso-proxy.yml"
-      - "terragrunt/env/sso_proxy/**"
-      - "terragrunt/env/common/**"
+      - "terragrunt/*/sso_proxy/**"
+      - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
 
 env:

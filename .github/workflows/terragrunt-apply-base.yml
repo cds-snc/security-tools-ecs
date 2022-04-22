@@ -6,8 +6,8 @@ on:
       - main
     paths:
       - ".github/workflows/terragrunt-apply-base.yml"
-      - "terragrunt/env/base/**"
-      - "terragrunt/env/common/**"
+      - "terragrunt/*/base/**"
+      - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
 
 env:

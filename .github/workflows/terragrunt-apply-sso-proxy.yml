@@ -6,8 +6,8 @@ on:
       - main
     paths:
       - ".github/workflows/terragrunt-apply-sso-proxy.yml"
-      - "terragrunt/env/sso_proxy/**"
-      - "terragrunt/env/common/**"
+      - "terragrunt/*/sso_proxy/**"
+      - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
 
 env:

@@ -2,9 +2,9 @@ module "vpc" {
   source = "github.com/cds-snc/terraform-modules?ref=v2.0.2//vpc"
   name   = var.product_name
 
-  cidr            = "172.16.0.0/16"
-  public_subnets  = ["172.16.0.0/20", "172.16.16.0/20", "172.16.32.0/20"]
-  private_subnets = ["172.16.128.0/20", "172.16.144.0/20", "172.16.160.0/20"]
+  cidr            = "172.16.0.0/25"
+  public_subnets  = ["172.16.0.0/28", "172.16.0.16/28", "172.16.0.32/28"]
+  private_subnets = ["172.16.0.64/28", "172.16.0.80/28", "172.16.0.96/28"]
 
 
   high_availability = true
