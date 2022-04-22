@@ -47,44 +47,6 @@ resource "aws_iam_role_policy_attachment" "ecs_container_registery_policies" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-
-resource "aws_iam_role_policy_attachment" "pomerium_policies" {
-  role       = aws_iam_role.pomerium_task_execution_role.name
-  policy_arn = aws_iam_policy.pomerium_policies.arn
-}
-
-data "aws_iam_policy_document" "pomerium_policies" {
-  statement {
-
-    effect = "Allow"
-
-    actions = [
-      "ssm:DescribeParameters",
-      "ssm:GetParameters",
-    ]
-    resources = [
-      aws_ssm_parameter.pomerium_google_client_id.arn,
-      aws_ssm_parameter.pomerium_google_client_secret.arn,
-      aws_ssm_parameter.session_key.arn,
-      aws_ssm_parameter.session_cookie_secret.arn,
-      aws_ssm_parameter.pomerium_client_id.arn,
-      aws_ssm_parameter.pomerium_client_secret.arn,
-    ]
-  }
-}
-
-resource "aws_iam_policy" "pomerium_policies" {
-  name   = "PomeriumSSOTaskExecutionPolicies"
-  path   = "/"
-  policy = data.aws_iam_policy_document.pomerium_policies.json
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-    Product               = var.product_name
-  }
-}
-
 ### WAF IAM role
 
 resource "aws_iam_role" "waf_log_role" {

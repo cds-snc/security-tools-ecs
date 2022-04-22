@@ -50,3 +50,40 @@ data "aws_iam_policy_document" "pomerium_container_execution_role" {
 data "aws_iam_policy" "ec2_container_service" {
   name = "AmazonEC2ContainerServiceforEC2Role"
 }
+
+resource "aws_iam_role_policy_attachment" "pomerium_policies" {
+  role       = aws_iam_role.pomerium_container_execution_role.name
+  policy_arn = aws_iam_policy.pomerium_policies.arn
+}
+
+data "aws_iam_policy_document" "pomerium_policies" {
+  statement {
+
+    effect = "Allow"
+
+    actions = [
+      "ssm:DescribeParameters",
+      "ssm:GetParameters",
+    ]
+    resources = [
+      aws_ssm_parameter.pomerium_google_client_id.arn,
+      aws_ssm_parameter.pomerium_google_client_secret.arn,
+      aws_ssm_parameter.session_key.arn,
+      aws_ssm_parameter.session_cookie_secret.arn,
+      aws_ssm_parameter.pomerium_client_id.arn,
+      aws_ssm_parameter.pomerium_client_secret.arn,
+    ]
+  }
+}
+
+resource "aws_iam_policy" "pomerium_policies" {
+  name   = "PomeriumSSOContainerExecutionPolicies"
+  path   = "/"
+  policy = data.aws_iam_policy_document.pomerium_policies.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
+}
