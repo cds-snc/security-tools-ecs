@@ -39,6 +39,11 @@ data "aws_iam_policy_document" "pomerium_container_execution_role" {
       type        = "Service"
       identifiers = ["ecs.amazonaws.com"]
     }
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
   }
 }
 
