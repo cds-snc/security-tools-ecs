@@ -44,7 +44,7 @@ resource "aws_iam_role_policy_attachment" "ec2_container_registery_policies" {
 
 resource "aws_iam_role_policy_attachment" "ecs_container_registery_policies" {
   role       = aws_iam_role.pomerium_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonECSTaskExecutionRolePolicy"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 
