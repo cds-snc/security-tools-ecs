@@ -1,11 +1,10 @@
-name: "Terragrunt apply base"
+name: "Terragrunt plan base"
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  pull_request:
     paths:
-      - ".github/workflows/terragrunt-apply-base.yml"
+      - ".github/workflows/base-terragrunt-plan.yml"
       - "terragrunt/*/base/**"
       - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
@@ -26,7 +25,7 @@ permissions:
   statuses: write
 
 jobs:
-  terragrunt-apply:
+  terragrunt-plan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,18 +42,23 @@ jobs:
               - 'terragrunt/aws/base/**'
               - 'terragrunt/env/base/**'
             common:
-              - '.github/workflows/terragrunt-apply-base.yml'
+              - '.github/workflows/base-terragrunt-plan.yml'
               - 'terragrunt/env/common/**'
               - 'terragrunt/env/terragrunt.hcl'
 
       - name: configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::794722365809:role/gh_admin_role
-          role-session-name: TFApply
+          role-to-assume: arn:aws:iam::794722365809:role/gh_plan_role
+          role-session-name: TFPlan
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terragrunt apply base
+      - name: Terragrunt plan base
         if: ${{ steps.filter.outputs.base == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: "terragrunt/env/base"
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "terragrunt/env/base"
+          comment-delete: "true"
+          comment-title: "base"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"

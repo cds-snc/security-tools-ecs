@@ -58,3 +58,9 @@ variable "session_key" {
   type        = string
   sensitive   = true
 }
+
+variable "ssm_prefix" {
+  description = "(Required) Prefix to apply to all key names"
+  type        = string
+  default     = "sso_proxy"
+}

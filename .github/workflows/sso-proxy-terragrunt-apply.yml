@@ -1,10 +1,11 @@
-name: "Terragrunt plan sso proxy"
+name: "Terragrunt apply sso proxy"
 
 on:
-  workflow_dispatch:
-  pull_request:
+  push:
+    branches:
+      - main
     paths:
-      - ".github/workflows/terragrunt-plan-sso-proxy.yml"
+      - ".github/workflows/sso-proxy-terragrunt-apply.yml"
       - "terragrunt/*/sso_proxy/**"
       - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
@@ -32,7 +33,7 @@ permissions:
   statuses: write
 
 jobs:
-  terragrunt-plan:
+  terragrunt-apply:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,23 +50,18 @@ jobs:
               - 'terragrunt/aws/sso_proxy/**'
               - 'terragrunt/env/sso_proxy/**'
             common:
-              - '.github/workflows/terragrunt-plan-sso-proxy.yml'
+              - '.github/workflows/sso-proxy-terragrunt-apply.yml'
               - 'terragrunt/env/common/**'
               - 'terragrunt/env/terragrunt.hcl'
 
       - name: configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::794722365809:role/gh_plan_role
-          role-session-name: TFPlan
+          role-to-assume: arn:aws:iam::794722365809:role/gh_admin_role
+          role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terragrunt plan sso_proxy
+      - name: Terragrunt apply sso proxy
         if: ${{ steps.filter.outputs.sso_proxy == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
-        with:
-          directory: "terragrunt/env/sso_proxy"
-          comment-delete: "true"
-          comment-title: "sso_proxy"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
+        working-directory: "terragrunt/env/sso_proxy"
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve

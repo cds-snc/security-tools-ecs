@@ -1,12 +1,12 @@
-name: "Terragrunt apply sso proxy"
+name: "Terragrunt apply base"
 
 on:
   push:
     branches:
       - main
     paths:
-      - ".github/workflows/terragrunt-apply-sso-proxy.yml"
-      - "terragrunt/*/sso_proxy/**"
+      - ".github/workflows/base-terragrunt-apply.yml"
+      - "terragrunt/*/base/**"
       - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
 
@@ -16,13 +16,6 @@ env:
   TERRAFORM_VERSION: 1.1.9
   TERRAGRUNT_VERSION: 0.36.7
   TF_INPUT: false
-  TF_VAR_pomerium_client_id: ${{ secrets.POMERIUM_CLIENT_ID }}
-  TF_VAR_pomerium_client_secret: ${{ secrets.POMERIUM_CLIENT_SECRET }}
-  TF_VAR_pomerium_google_client_id: ${{ secrets.POMERIUM_GOOGLE_CLIENT_ID }}
-  TF_VAR_pomerium_google_client_secret: ${{ secrets.POMERIUM_GOOGLE_CLIENT_SECRET }}
-  TF_VAR_pomerium_sso_credentials: ${{ secrets.POMERIUM_SSO_CREDENTIALS }}
-  TF_VAR_session_cookie_secret: ${{ secrets.SESSION_COOKIE_SECRET }}
-  TF_VAR_session_key: ${{ secrets.SESSION_KEY }}
 
 permissions:
   id-token: write
@@ -46,11 +39,11 @@ jobs:
         id: filter
         with:
           filters: |
-            sso_proxy:
-              - 'terragrunt/aws/sso_proxy/**'
-              - 'terragrunt/env/sso_proxy/**'
+            base:
+              - 'terragrunt/aws/base/**'
+              - 'terragrunt/env/base/**'
             common:
-              - '.github/workflows/terragrunt-apply-sso-proxy.yml'
+              - '.github/workflows/base-terragrunt-apply.yml'
               - 'terragrunt/env/common/**'
               - 'terragrunt/env/terragrunt.hcl'
 
@@ -61,7 +54,7 @@ jobs:
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terragrunt apply sso proxy
-        if: ${{ steps.filter.outputs.sso_proxy == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: "terragrunt/env/sso_proxy"
+      - name: Terragrunt apply base
+        if: ${{ steps.filter.outputs.base == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: "terragrunt/env/base"
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
