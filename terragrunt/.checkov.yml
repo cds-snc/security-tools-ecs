@@ -1,4 +1,5 @@
 skip-check:
+  - CKV_AWS_51  # ECR: mutable images is acceptable since the latest tag will be used
   - CKV_AWS_158 # CloudWatch: default AWS Managed encryption key is acceptable
   - CKV_AWS_231 # port 3389 blocked by the vpc terraform module using the block_rdp flag
   - CKV_AWS_241 # Kinesis firehose: default AWS Managed encryption key is acceptable
