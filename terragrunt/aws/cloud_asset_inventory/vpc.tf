@@ -27,6 +27,7 @@ module "vpc" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group" "load_balancer" {
+  #checkov:skip=CKV2_AWS_5:This security group will be attached to a lb in a future PR
   name        = "load_balancer"
   description = "Allow inbound traffic to cartography load balancer"
   vpc_id      = module.vpc.vpc_id
@@ -61,6 +62,7 @@ resource "aws_security_group" "load_balancer" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group" "cartography" {
+  #checkov:skip=CKV2_AWS_5:This security group will be attached to a lb in a future PR
   name        = "cartography"
   description = "Allow inbound traffic to cartography load balancer"
   vpc_id      = module.vpc.vpc_id

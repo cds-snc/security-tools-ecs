@@ -31,7 +31,7 @@ resource "aws_ssm_parameter" "neo4j_auth" {
 
 resource "aws_ssm_parameter" "elasticsearch_user" {
   name  = "/${var.ssm_prefix}/elasticsearch_user"
-  type  = "String"
+  type  = "SecureString"
   value = random_string.elasticsearch_user.id
 }
 
@@ -43,7 +43,7 @@ resource "aws_ssm_parameter" "elasticsearch_password" {
 
 resource "aws_ssm_parameter" "asset_inventory_account_list" {
   name  = "/${var.ssm_prefix}/asset_inventory_account_list"
-  type  = "StringList"
+  type  = "SecureString"
   value = jsonencode(var.asset_inventory_managed_accounts)
 }
 
