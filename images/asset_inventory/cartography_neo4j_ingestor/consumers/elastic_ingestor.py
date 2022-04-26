@@ -17,13 +17,13 @@ class Ingestor(object):
         logger.info("Initialising ingestor")
 
         # Parse env vars
-        self.elastic_url = os.environ['ELASTIC_URL']
-        self.elastic_user = os.environ['ELASTICSEARCH_USER']
-        self.elastic_password = os.environ['ELASTICSEARCH_PASSWORD']
-        self.elastic_index_spec = os.environ['ELASTIC_INDEX_SPEC']
-        self.elastic_dry_run = os.environ['ELASTIC_DRY_RUN']
-        self.elastic_tls_enabled = os.environ['ELASTIC_TLS_ENABLED']
-        self.index_standard = os.environ['ELASTIC_INDEX']
+        self.elastic_url = os.environ["ELASTIC_URL"]
+        self.elastic_user = os.environ["ELASTICSEARCH_USER"]
+        self.elastic_password = os.environ["ELASTICSEARCH_PASSWORD"]
+        self.elastic_index_spec = os.environ["ELASTIC_INDEX_SPEC"]
+        self.elastic_dry_run = os.environ["ELASTIC_DRY_RUN"]
+        self.elastic_tls_enabled = os.environ["ELASTIC_TLS_ENABLED"]
+        self.index_standard = os.environ["ELASTIC_INDEX"]
 
         # Compute tag to identify this run
         now = datetime.datetime.now()
@@ -54,7 +54,7 @@ class Ingestor(object):
                 self.elastic_dry_run,
                 self.elastic_user,
                 self.elastic_password,
-                self.elastic_tls_enabled
+                self.elastic_tls_enabled,
             )
             self.es_clients.append(c)
 
@@ -83,7 +83,7 @@ class Ingestor(object):
         """
         sanitised = {}
         for k, v in record.items():
-            new_key = k.replace('(', '_').replace(')', '_')
+            new_key = k.replace("(", "_").replace(")", "_")
             sanitised[new_key] = v
         return sanitised
 
@@ -91,12 +91,11 @@ class Ingestor(object):
         """
         Enrich results from Neo4j with metadata needed by ES
         """
-        record['metadata.query_name'] = query['name']
-        record['metadata.query_id'] = '{}_{}'.format(
-            query['name'], self.run_tag)
-        record['metadata.query_description'] = query['description']
-        record['metadata.query_headers'] = query['headers']
-        record['@timestamp'] = int(round(time.time() * 1000))
+        record["metadata.query_name"] = query["name"]
+        record["metadata.query_id"] = "{}_{}".format(query["name"], self.run_tag)
+        record["metadata.query_description"] = query["description"]
+        record["metadata.query_headers"] = query["headers"]
+        record["@timestamp"] = int(round(time.time() * 1000))
         return record
 
     # ===================================================================
@@ -120,13 +119,13 @@ class Ingestor(object):
             #   'headers': ['project_id', ...],
             #   'result': [ {...}, ]
             logger.debug(f"Processing query: {query}")
-            for r in query['result']:
+            for r in query["result"]:
                 # Sanitise fields
                 sanitised = self._sanitise_fields(r)
                 # Enrich data
                 enriched = self._enrich_results(sanitised, query)
                 # Send to elastic
-                self._es_push_results(query['name'], enriched)
+                self._es_push_results(query["name"], enriched)
 
 
 def main():
@@ -140,7 +139,7 @@ def main():
     logger.info("Starting ingesting data from Neo4j...")
 
     # Queries - AWS
-    queries_results = ingestor.query_by_tag(['aws'])
+    queries_results = ingestor.query_by_tag(["aws"])
     ingestor.push_results(queries_results)
 
     # Queries - Azure
@@ -150,5 +149,5 @@ def main():
     logger.info("Ingestion completed successfully")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

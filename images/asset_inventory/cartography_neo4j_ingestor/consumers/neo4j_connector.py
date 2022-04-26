@@ -9,7 +9,7 @@ logger = logging.getLogger("neo4j_connector")
 logger.setLevel(logging.INFO)
 
 NEO4J_QUERIES_FILES = [
-    'queries.json',
+    "queries.json",
 ]
 
 
@@ -34,17 +34,18 @@ class NeoDB(object):
         If no config has been passed to __init__,
         fetch the connection string from environment variables
         """
-        self._neo4j_uri = os.environ['NEO4J_URI']
-        self._neo4j_user = os.environ['NEO4J_USER']
-        self._neo4j_password = os.environ['NEO4J_SECRETS_PASSWORD']
+        self._neo4j_uri = os.environ["NEO4J_URI"]
+        self._neo4j_user = os.environ["NEO4J_USER"]
+        self._neo4j_password = os.environ["NEO4J_SECRETS_PASSWORD"]
 
     def _connect(self):
         """
         Instantiate the Neo4j python driver
         """
-        self._driver = GraphDatabase.driver(self._neo4j_uri,
-                                            auth=(self._neo4j_user, self._neo4j_password))
-        logger.info('Neo4J Client instantiated: {}'.format(self._neo4j_uri))
+        self._driver = GraphDatabase.driver(
+            self._neo4j_uri, auth=(self._neo4j_user, self._neo4j_password)
+        )
+        logger.info("Neo4J Client instantiated: {}".format(self._neo4j_uri))
 
     @staticmethod
     def _exec_query(tx, query, kwargs):
@@ -82,8 +83,8 @@ class Neo4jConnector(object):
             if not os.path.isfile(path):
                 logger.warning('File "{}" not found. Skipping...'.format(path))
                 continue
-            with open(path, 'r') as fp:
-                logger.debug('Loading queries file: {}'.format(path))
+            with open(path, "r") as fp:
+                logger.debug("Loading queries file: {}".format(path))
                 body = fp.read()
                 temp = body.strip()[1:-1]
                 extracted.append(temp)
@@ -96,10 +97,10 @@ class Neo4jConnector(object):
     #
     @staticmethod
     def _n_recent_days(N):
-        return (datetime.utcnow() - timedelta(days=N))
+        return datetime.utcnow() - timedelta(days=N)
 
     def _parse_dynamic_params(self, q):
-        params = q.get('params', '')
+        params = q.get("params", "")
         kwargs = ""
         if params:
             # Iterate through the parameters and verify if one matches the supported types
@@ -108,8 +109,9 @@ class Neo4jConnector(object):
                 # The query has a parameter specifying to
                 # retrieve the assets for the N most recent days
                 if p == "n_recent_days":
-                    kwargs[params[p]["param_name"]] = \
-                        str(self._n_recent_days(params[p]["param_value"]))
+                    kwargs[params[p]["param_name"]] = str(
+                        self._n_recent_days(params[p]["param_value"])
+                    )
         return kwargs
 
     #
@@ -122,16 +124,18 @@ class Neo4jConnector(object):
         """
         if type(tags) is not list:
             tags = list(tags)
-        return [q for q in queries if all(elem in q['tags'] for elem in tags)]
+        return [q for q in queries if all(elem in q["tags"] for elem in tags)]
 
     def _filter_by_account(self, cypher, account):
         if account:
-            if 'WHERE' in cypher:
+            if "WHERE" in cypher:
                 cypher = cypher.replace(
-                    ' WHERE ', ' WHERE a.name = "{}" and '.format(account))
+                    " WHERE ", ' WHERE a.name = "{}" and '.format(account)
+                )
             else:
                 cypher = cypher.replace(
-                    ' RETURN ', ' WHERE a.name = "{}" RETURN '.format(account))
+                    " RETURN ", ' WHERE a.name = "{}" RETURN '.format(account)
+                )
         return cypher
 
     #
@@ -147,18 +151,18 @@ class Neo4jConnector(object):
             # Parse optional dynamic parameters
             kwargs = self._parse_dynamic_params(q)
             # If an account is provided, inject a WHERE clause to filter by account
-            cypher = self._filter_by_account(q['query'], account)
+            cypher = self._filter_by_account(q["query"], account)
             # Add return clause
-            cypher = "{} {}".format(cypher, q['return'])
+            cypher = "{} {}".format(cypher, q["return"])
             # Execute the query and parse results as dictionaries
             logger.debug(f"Running query: {cypher}")
             records = self.db.query(cypher, kwargs)
             # Add records to result list
             temp = {}
-            temp['name'] = q['name']
-            temp['description'] = q['description']
-            temp['headers'] = q['result_headers']
-            temp['result'] = records
+            temp["name"] = q["name"]
+            temp["description"] = q["description"]
+            temp["headers"] = q["result_headers"]
+            temp["result"] = records
             logger.debug(f"Result: {len(records)} records")
             queries_result.append(temp)
         return queries_result
@@ -171,5 +175,5 @@ class Neo4jConnector(object):
         return self._execute_queries(selected_queries, account)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Neo4jConnector()
