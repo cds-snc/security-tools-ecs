@@ -7,9 +7,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends build-essential ca-certificates curl git gnupg2 jq libffi-dev make openssh-client vim zsh \
     && apt-get autoremove -y && apt-get clean -y 
 
-# Install Checkov
+# Install Python tools
 RUN pip3 install --upgrade requests setuptools \
-    && pip3 install --upgrade botocore checkov
+    && pip3 install --upgrade botocore checkov pipx
+
+RUN python3 -m pipx ensurepath && pipx install aws-sso-util
     
 # Setup aliases and autocomplete
 RUN echo "\n\

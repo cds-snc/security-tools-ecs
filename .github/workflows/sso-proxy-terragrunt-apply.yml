@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/terragrunt-apply-sso-proxy.yml"
+      - ".github/workflows/sso-proxy-terragrunt-apply.yml"
       - "terragrunt/*/sso_proxy/**"
       - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
@@ -50,7 +50,7 @@ jobs:
               - 'terragrunt/aws/sso_proxy/**'
               - 'terragrunt/env/sso_proxy/**'
             common:
-              - '.github/workflows/terragrunt-apply-sso-proxy.yml'
+              - '.github/workflows/sso-proxy-terragrunt-apply.yml'
               - 'terragrunt/env/common/**'
               - 'terragrunt/env/terragrunt.hcl'
 

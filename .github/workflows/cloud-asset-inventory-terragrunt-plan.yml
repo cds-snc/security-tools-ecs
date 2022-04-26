@@ -1,11 +1,11 @@
-name: "Terragrunt plan sso proxy"
+name: "Terragrunt plan cloud asset inventory"
 
 on:
   workflow_dispatch:
   pull_request:
     paths:
-      - ".github/workflows/terragrunt-plan-sso-proxy.yml"
-      - "terragrunt/*/sso_proxy/**"
+      - ".github/workflows/cloud-asset-inventory-terragrunt-plan.yml"
+      - "terragrunt/*/cloud_asset_inventory/**"
       - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
 
@@ -15,13 +15,6 @@ env:
   TERRAFORM_VERSION: 1.1.9
   TERRAGRUNT_VERSION: 0.36.7
   TF_INPUT: false
-  TF_VAR_pomerium_client_id: ${{ secrets.POMERIUM_CLIENT_ID }}
-  TF_VAR_pomerium_client_secret: ${{ secrets.POMERIUM_CLIENT_SECRET }}
-  TF_VAR_pomerium_google_client_id: ${{ secrets.POMERIUM_GOOGLE_CLIENT_ID }}
-  TF_VAR_pomerium_google_client_secret: ${{ secrets.POMERIUM_GOOGLE_CLIENT_SECRET }}
-  TF_VAR_pomerium_sso_credentials: ${{ secrets.POMERIUM_SSO_CREDENTIALS }}
-  TF_VAR_session_cookie_secret: ${{ secrets.SESSION_COOKIE_SECRET }}
-  TF_VAR_session_key: ${{ secrets.SESSION_KEY }}
 
 permissions:
   id-token: write
@@ -45,11 +38,11 @@ jobs:
         id: filter
         with:
           filters: |
-            sso_proxy:
-              - 'terragrunt/aws/sso_proxy/**'
-              - 'terragrunt/env/sso_proxy/**'
+            cloud_asset_inventory:
+              - 'terragrunt/aws/cloud_asset_inventory/**'
+              - 'terragrunt/env/cloud_asset_inventory/**'
             common:
-              - '.github/workflows/terragrunt-plan-sso-proxy.yml'
+              - '.github/workflows/cloud-asset-inventory-terragrunt-plan.yml'
               - 'terragrunt/env/common/**'
               - 'terragrunt/env/terragrunt.hcl'
 
@@ -59,13 +52,14 @@ jobs:
           role-to-assume: arn:aws:iam::794722365809:role/gh_plan_role
           role-session-name: TFPlan
           aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terragrunt plan sso_proxy
-        if: ${{ steps.filter.outputs.sso_proxy == 'true' || steps.filter.outputs.common == 'true' }}
+      - name: Get current date to determine if secrets need to be rotated
+        run: echo "TF_VAR_password_change_id=$(date +'%Y-%m')" >> $GITHUB_ENV
+      - name: Terragrunt plan cloud_asset_inventory
+        if: ${{ steps.filter.outputs.cloud_asset_inventory == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
-          directory: "terragrunt/env/sso_proxy"
+          directory: "terragrunt/env/cloud_asset_inventory"
           comment-delete: "true"
-          comment-title: "sso_proxy"
+          comment-title: "cloud_asset_inventory"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"

@@ -3,6 +3,7 @@ terraform {
 }
 
 inputs = {
+  product_name              = "security-tools-sso-proxy"
   pomerium_image            = "pomerium/pomerium"
   pomerium_image_tag        = "git-74310b3d"
   pomerium_verify_image     = "pomerium/verify"
