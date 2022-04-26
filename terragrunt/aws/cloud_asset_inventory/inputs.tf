@@ -7,7 +7,6 @@ variable "asset_inventory_managed_accounts" {
 variable "password_change_id" {
   description = "(Required) Id to trigger changing the elasticsearch and neo4j password."
   type        = string
-  default     = "1970-01-01"
 }
 
 variable "ssm_prefix" {

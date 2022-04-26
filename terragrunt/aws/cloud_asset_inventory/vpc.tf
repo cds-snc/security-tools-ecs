@@ -2,9 +2,9 @@ module "vpc" {
   source = "github.com/cds-snc/terraform-modules?ref=v2.0.2//vpc"
   name   = var.product_name
 
-  cidr            = "10.0.0.0/16"
-  public_subnets  = ["10.0.0.0/24"]
-  private_subnets = ["10.0.1.0/24"]
+  cidr            = "10.0.0.0/22"   # Reserve 1,022 IP addresses for VPC. 10.0.1.0/24 and 10.0.2.0/24 are flexible.
+  public_subnets  = ["10.0.0.0/24"] # Reserve 254 IP addresses for public subnets
+  private_subnets = ["10.0.3.0/24"] # Reserve 254 IP addresses for private subnets
 
 
   high_availability = false
@@ -37,7 +37,7 @@ resource "aws_security_group" "load_balancer" {
     from_port   = 7474
     to_port     = 7474
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = module.vpc.public_subnet_cidr_blocks
   }
 
   ingress {
@@ -45,7 +45,7 @@ resource "aws_security_group" "load_balancer" {
     from_port   = 7687
     to_port     = 7687
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = module.vpc.public_subnet_cidr_blocks
   }
 
   ingress {
@@ -53,7 +53,7 @@ resource "aws_security_group" "load_balancer" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = module.vpc.public_subnet_cidr_blocks
   }
 }
 
