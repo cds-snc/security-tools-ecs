@@ -52,11 +52,11 @@ do
     ROLE_EXISTS="$(aws --profile $AWS_PROFILE iam get-role --role-name $SECURITY_AUDIT_ROLE_NAME --output text 2>&1)"
     if [[ "$ROLE_EXISTS" == *"NoSuchEntity"* ]]; then
       echo -e "\033[0;32m✔\033[0m $SECURITY_AUDIT_ROLE_NAME doesn't exist, creating"
-      aws --profile $AWS_PROFILE iam create-role --role-name $SECURITY_AUDIT_ROLE_NAME --assume-role-policy-document $ASSUME_ROLE_POLICY_DOCUMENT > /dev/null 2>&1
+      aws --profile $AWS_PROFILE iam create-role --role-name $SECURITY_AUDIT_ROLE_NAME --assume-role-policy-document "$ASSUME_ROLE_POLICY_DOCUMENT" > /dev/null 2>&1
       aws --profile $AWS_PROFILE iam wait role-exists --role-name $SECURITY_AUDIT_ROLE_NAME
     fi
     echo -e "\033[0;32m✔\033[0m Attaching policies to $SECURITY_AUDIT_ROLE_NAME"
-    aws --profile $AWS_PROFILE iam update-assume-role-policy --role-name $SECURITY_AUDIT_ROLE_NAME --policy-document $ASSUME_ROLE_POLICY_DOCUMENT > /dev/null 2>&1
+    aws --profile $AWS_PROFILE iam update-assume-role-policy --role-name $SECURITY_AUDIT_ROLE_NAME --policy-document "$ASSUME_ROLE_POLICY_DOCUMENT" > /dev/null 2>&1
     aws --profile $AWS_PROFILE iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/SecurityAudit --role-name $SECURITY_AUDIT_ROLE_NAME
     sleep 1
   fi
