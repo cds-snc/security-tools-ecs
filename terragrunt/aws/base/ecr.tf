@@ -2,7 +2,7 @@
 # ECR
 #
 resource "aws_ecr_repository" "cartography" {
-  name                 = "ecs/cloud_asset_inventory/cartography"
+  name                 = "${var.product_name}/cloud_asset_inventory/cartography"
   image_tag_mutability = "MUTABLE"
 
   encryption_configuration {
@@ -11,11 +11,17 @@ resource "aws_ecr_repository" "cartography" {
 
   image_scanning_configuration {
     scan_on_push = true
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
   }
 }
 
 resource "aws_ecr_repository" "neo4j_ingestor" {
-  name                 = "ecs/cloud_asset_inventory/neo4j_ingestor"
+  name                 = "${var.product_name}/cloud_asset_inventory/neo4j_ingestor"
   image_tag_mutability = "MUTABLE"
 
   encryption_configuration {
@@ -24,5 +30,11 @@ resource "aws_ecr_repository" "neo4j_ingestor" {
 
   image_scanning_configuration {
     scan_on_push = true
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
   }
 }
