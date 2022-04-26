@@ -22,7 +22,7 @@ jobs:
         with:
           filters: |
             cloud_asset_inventory/cartography: 'images/asset_inventory/cartography/**'
-            cloud_asset_inventory/neo4j_ingestor: 'images/asset_inventory/cartography_neo4j_ingestor/**'
+            cloud_asset_inventory/neo4j_ingestor: 'images/asset_inventory/neo4j_ingestor/**'
 
   build:
     if: needs.changes.outputs.images != '[]'
