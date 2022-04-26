@@ -30,8 +30,8 @@ jobs:
         id: filter
         with:
           filters: |
-            cloud_asset_inventory/cartography: 'images/asset_inventory/cartography/**'
-            cloud_asset_inventory/neo4j_ingestor: 'images/asset_inventory/neo4j_ingestor/**'
+            cloud_asset_inventory/cartography: 'images/cloud_asset_inventory/cartography/**'
+            cloud_asset_inventory/neo4j_ingestor: 'images/cloud_asset_inventory/neo4j_ingestor/**'
 
   build-push-and-deploy:
     if: needs.changes.outputs.images != '[]'
