@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Build container
-        working-directory: ./${{ matrix.image }}
+        working-directory: ./images/${{ matrix.image }}
         run: |
           docker build \
           --build-arg git_sha=$GITHUB_SHA \
