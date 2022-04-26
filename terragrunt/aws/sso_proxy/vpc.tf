@@ -2,10 +2,9 @@ module "vpc" {
   source = "github.com/cds-snc/terraform-modules?ref=v2.0.2//vpc"
   name   = var.product_name
 
-  cidr            = "172.16.0.0/25"
-  public_subnets  = ["172.16.0.0/28", "172.16.0.16/28", "172.16.0.32/28"]
-  private_subnets = ["172.16.0.64/28", "172.16.0.80/28", "172.16.0.96/28"]
-
+  cidr            = "10.0.0.0/21" # Reserve 2,046 IP addresses for VPC. 10.0.3.0/24 and 10.0.4.0/24 are flexible.
+  public_subnets  = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
+  private_subnets = ["10.0.5.0/24", "10.0.6.0/24", "10.0.7.0/24"]
 
   high_availability = true
   enable_flow_log   = false

@@ -9,6 +9,8 @@ IFS=$'\n\t'
 # REQUIREMENTS:
 # - AWS CLI
 # - AWS SSO Util; https://pypi.org/project/aws-sso-util/
+# ENVIRONMENT:
+# - AWS_DEFAULT_SSO_START_URL: "https://[directory].awsapps.com/start", where [directory] is the AWS SSO directory
 # USE:
 # ./bootstrap_iam_using_sso.sh 
 #
