@@ -12,6 +12,12 @@ resource "aws_ecr_repository" "cartography" {
   image_scanning_configuration {
     scan_on_push = true
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_ecr_repository" "neo4j_ingestor" {
@@ -24,5 +30,11 @@ resource "aws_ecr_repository" "neo4j_ingestor" {
 
   image_scanning_configuration {
     scan_on_push = true
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
   }
 }
