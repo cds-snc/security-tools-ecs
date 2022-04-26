@@ -113,6 +113,12 @@ resource "aws_iam_policy" "cartography_policies" {
   name   = "CartographyTaskExecutionPolicies"
   path   = "/"
   policy = data.aws_iam_policy_document.cartography_policies.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 ### WAF IAM role

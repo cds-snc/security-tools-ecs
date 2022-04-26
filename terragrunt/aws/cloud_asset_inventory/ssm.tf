@@ -21,29 +21,59 @@ resource "aws_ssm_parameter" "neo4j_password" {
   name  = "/${var.ssm_prefix}/neo4j_password"
   type  = "SecureString"
   value = random_password.neo4j_password[var.password_change_id].result
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_ssm_parameter" "neo4j_auth" {
   name  = "/${var.ssm_prefix}/neo4j_auth"
   type  = "SecureString"
   value = "neo4j/${random_password.neo4j_password[var.password_change_id].result}"
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_ssm_parameter" "elasticsearch_user" {
   name  = "/${var.ssm_prefix}/elasticsearch_user"
   type  = "SecureString"
   value = random_string.elasticsearch_user.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_ssm_parameter" "elasticsearch_password" {
   name  = "/${var.ssm_prefix}/elasticsearch_password"
   type  = "SecureString"
   value = random_password.elasticsearch_password[var.password_change_id].result
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_ssm_parameter" "asset_inventory_account_list" {
   name  = "/${var.ssm_prefix}/asset_inventory_account_list"
   type  = "SecureString"
   value = jsonencode(var.asset_inventory_managed_accounts)
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 

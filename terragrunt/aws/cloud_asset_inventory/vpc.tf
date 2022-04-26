@@ -55,6 +55,12 @@ resource "aws_security_group" "load_balancer" {
     protocol    = "tcp"
     cidr_blocks = module.vpc.public_subnet_cidr_blocks
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -135,16 +141,24 @@ resource "aws_security_group" "cartography" {
     cidr_blocks = module.vpc.public_subnet_cidr_blocks
     self        = true
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
-resource "aws_flow_log" "cartography" {
-  iam_role_arn    = aws_iam_role.cartography_task_execution_role.arn
-  log_destination = aws_cloudwatch_log_group.cartography_flow_log.arn
-  traffic_type    = "ALL"
-  vpc_id          = module.vpc.vpc_id
-}
+resource "aws_flow_log" "cloud-based-sensor" {
+  log_destination      = "arn:aws:s3:::${var.cbs_satellite_bucket_name}/vpc_flow_logs/"
+  log_destination_type = "s3"
+  traffic_type         = "ALL"
+  vpc_id               = module.vpc.vpc_id
+  log_format           = "$${vpc-id} $${version} $${account-id} $${interface-id} $${srcaddr} $${dstaddr} $${srcport} $${dstport} $${protocol} $${packets} $${bytes} $${start} $${end} $${action} $${log-status} $${subnet-id} $${instance-id}"
 
-resource "aws_cloudwatch_log_group" "cartography_flow_log" {
-  name              = "cartography_flow_log"
-  retention_in_days = 14
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
