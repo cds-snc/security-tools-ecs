@@ -29,6 +29,11 @@ resource "aws_iam_role_policy_attachment" "cartography_launcher_lambda_basic_exe
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "cartography_launcher_lambda_vpc_service_role" {
+  role       = aws_iam_role.cartography_launcher_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 resource "aws_iam_role_policy_attachment" "cartography_launcher_lambda_xray_write" {
   role       = aws_iam_role.cartography_launcher_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
