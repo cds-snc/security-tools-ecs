@@ -16,6 +16,12 @@ resource "aws_iam_policy" "cartography_launcher_lambda" {
   name   = "CartographyLauncherLambdaRolePolicy"
   path   = "/"
   policy = data.aws_iam_policy_document.cartography_launcher_lambda.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "cartography_launcher_lambda_basic_execution" {

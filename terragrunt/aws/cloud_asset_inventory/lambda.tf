@@ -17,6 +17,11 @@ resource "aws_lambda_function" "cartography_launcher" {
 
   source_code_hash = data.archive_file.cartography_launcher.output_base64sha256
 
+  vpc_config {
+    subnet_ids         = module.vpc.private_subnet_ids
+    security_group_ids = [aws_security_group.cartography.id]
+  }
+
   environment {
     variables = {
       CARTOGRAPHY_ECS_TASK_DEF        = aws_ecs_task_definition.cartography.family
