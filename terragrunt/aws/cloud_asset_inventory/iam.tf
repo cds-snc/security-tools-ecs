@@ -60,67 +60,6 @@ resource "aws_iam_role_policy_attachment" "ecs_container_registery_policies" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "cartography_policies" {
-  role       = aws_iam_role.cartography_task_execution_role.name
-  policy_arn = aws_iam_policy.cartography_policies.arn
-}
-
-data "aws_iam_policy_document" "cartography_policies" {
-  statement {
-
-    effect = "Allow"
-
-    actions = [
-      "sts:AssumeRole",
-    ]
-    resources = local.trusted_role_arns
-  }
-
-  statement {
-
-    effect = "Allow"
-
-    actions = [
-      "ecr:GetAuthorizationToken",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-    ]
-    resources = [
-      "*"
-    ]
-  }
-
-  statement {
-
-    effect = "Allow"
-
-    actions = [
-      "ssm:DescribeParameters",
-      "ssm:GetParameters",
-    ]
-    resources = [
-      aws_ssm_parameter.neo4j_auth.arn,
-      aws_ssm_parameter.neo4j_password.arn,
-      aws_ssm_parameter.elasticsearch_user.arn,
-      aws_ssm_parameter.elasticsearch_password.arn,
-      aws_ssm_parameter.asset_inventory_account_list.arn,
-    ]
-  }
-}
-
-resource "aws_iam_policy" "cartography_policies" {
-  name   = "CartographyTaskExecutionPolicies"
-  path   = "/"
-  policy = data.aws_iam_policy_document.cartography_policies.json
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-    Product               = var.product_name
-  }
-}
-
 ### WAF IAM role
 
 resource "aws_iam_role" "waf_log_role" {

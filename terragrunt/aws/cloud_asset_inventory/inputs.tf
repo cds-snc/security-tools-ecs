@@ -14,3 +14,8 @@ variable "ssm_prefix" {
   type        = string
   default     = "cartography"
 }
+
+variable "cartography_repository_url" {
+  description = "(Required) URL to the cartography repository"
+  type        = string
+}
