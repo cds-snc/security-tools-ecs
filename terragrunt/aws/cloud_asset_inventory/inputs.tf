@@ -4,6 +4,16 @@ variable "asset_inventory_managed_accounts" {
   default     = []
 }
 
+variable "neo4j_image" {
+  description = "(Required) The neo4j image to use"
+  type        = string
+}
+
+variable "neo4j_image_tag" {
+  description = "(Required) The neo4j image tag to use"
+  type        = string
+}
+
 variable "password_change_id" {
   description = "(Required) Id to trigger changing the elasticsearch and neo4j password."
   type        = string
