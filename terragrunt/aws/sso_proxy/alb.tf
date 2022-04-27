@@ -25,7 +25,7 @@ resource "aws_lb" "pomerium" {
   }
 }
 
-resource "aws_lb_target_group" "ecs" {
+resource "aws_lb_target_group" "sso_proxy" {
   name                 = "ecs"
   port                 = 443
   protocol             = "HTTP"
@@ -83,7 +83,7 @@ resource "aws_lb_listener" "https" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.ecs.arn
+    target_group_arn = aws_lb_target_group.sso_proxy.arn
   }
 
   tags = {

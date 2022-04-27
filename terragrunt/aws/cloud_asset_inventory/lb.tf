@@ -24,7 +24,7 @@ resource "aws_lb" "cartography" {
   }
 }
 
-resource "aws_lb_target_group" "ecs" {
+resource "aws_lb_target_group" "neo4j" {
   name                 = "ecs"
   port                 = 7474
   protocol             = "TCP"
@@ -63,7 +63,7 @@ resource "aws_lb_listener" "https" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.ecs.arn
+    target_group_arn = aws_lb_target_group.neo4j.arn
   }
 
   tags = {
