@@ -4,7 +4,7 @@
 resource "aws_lb" "cartography" {
   #checkov:skip=CKV_AWS_152:Load Balancer: Not running in high availability mode
   name               = "cartography"
-  internal           = false
+  internal           = true
   load_balancer_type = "network"
   subnets            = module.vpc.public_subnet_ids
 
