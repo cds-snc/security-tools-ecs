@@ -6,7 +6,7 @@ resource "aws_lb" "cartography" {
   name               = "cartography"
   internal           = true
   load_balancer_type = "network"
-  subnets            = module.vpc.public_subnet_ids
+  subnets            = module.vpc.private_subnet_ids
 
   access_logs {
     bucket  = var.cbs_satellite_bucket_name
