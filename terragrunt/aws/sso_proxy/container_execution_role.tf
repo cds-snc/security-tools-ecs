@@ -5,7 +5,7 @@
 ###
 
 resource "aws_iam_role" "pomerium_container_execution_role" {
-  name               = "container_execution_role"
+  name               = "pomerium_container_execution_role"
   assume_role_policy = data.aws_iam_policy_document.pomerium_container_execution_role.json
 
   tags = {
