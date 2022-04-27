@@ -5,6 +5,12 @@ resource "aws_ecs_cluster" "neo4j" {
     name  = "containerInsights"
     value = "enabled"
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_ecs_service" "neo4j" {
@@ -34,6 +40,12 @@ resource "aws_ecs_service" "neo4j" {
   network_configuration {
     security_groups = [aws_security_group.cartography.id]
     subnets         = module.vpc.private_subnet_ids
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
   }
 }
 

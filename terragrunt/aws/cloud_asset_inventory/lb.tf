@@ -2,13 +2,26 @@
 # Load balancer
 #
 resource "aws_lb" "cartography" {
+  #checkov:skip=CKV_AWS_152:Load Balancer: Not running in high availability mode
   name               = "cartography"
   internal           = false
   load_balancer_type = "network"
   subnets            = module.vpc.public_subnet_ids
 
+  access_logs {
+    bucket  = var.cbs_satellite_bucket_name
+    prefix  = "lb_logs"
+    enabled = true
+  }
+
   drop_invalid_header_fields = true
   enable_deletion_protection = true
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_lb_target_group" "ecs" {
@@ -52,6 +65,12 @@ resource "aws_lb_listener" "https" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ecs.arn
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_lb_listener" "bolt" {
@@ -62,5 +81,11 @@ resource "aws_lb_listener" "bolt" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.bolt.arn
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
   }
 }

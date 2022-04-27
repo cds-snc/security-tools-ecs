@@ -2,6 +2,12 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
   name        = "internal.local"
   description = "internal domain for all services"
   vpc         = module.vpc.vpc_id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_service_discovery_service" "neo4j" {
@@ -20,5 +26,11 @@ resource "aws_service_discovery_service" "neo4j" {
 
   health_check_custom_config {
     failure_threshold = 5
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
   }
 }
