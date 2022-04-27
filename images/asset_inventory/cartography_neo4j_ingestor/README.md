@@ -1,1 +1,0 @@
-Copied from https://www.marcolancini.it/2020/blog-tracking-moving-clouds-with-cartography/
