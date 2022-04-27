@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "bolt" {
 }
 
 
-resource "aws_lb_listener" "https" {
+resource "aws_lb_listener" "neo4j" {
   load_balancer_arn = aws_lb.cartography.arn
 
   port     = 7474
