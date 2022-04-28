@@ -11,7 +11,8 @@ dependency "cloud_asset_inventory" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-  cloud_asset_inventory_vpc_id = "vpc-1234567890abcdef0" }
+    cloud_asset_inventory_vpc_id = "vpc-1234567890abcdef0" 
+  }
 }
 
 inputs = {
