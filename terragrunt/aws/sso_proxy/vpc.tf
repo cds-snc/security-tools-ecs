@@ -30,6 +30,13 @@ resource "aws_security_group" "pomerium" {
   description = "Allow inbound traffic to pomerium load balancer"
   vpc_id      = module.vpc.vpc_id
 
+  egress {
+    description = "Access Cartography cidr"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [var.cloud_asset_inventory_cidr]
+  }
 
   egress {
     description = "Access to the internet"
