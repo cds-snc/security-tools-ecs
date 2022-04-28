@@ -10,7 +10,10 @@ resource "aws_vpc_peering_connection" "cloud_asset_inventory" {
   }
 
   tags = {
-    Side = "Requester"
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+    Side                  = "Requester"
   }
 }
 
