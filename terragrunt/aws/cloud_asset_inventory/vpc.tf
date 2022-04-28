@@ -37,7 +37,7 @@ resource "aws_security_group" "load_balancer" {
     from_port   = 7474
     to_port     = 7474
     protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnet_cidr_blocks
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
   }
 
   ingress {
@@ -45,15 +45,15 @@ resource "aws_security_group" "load_balancer" {
     from_port   = 7687
     to_port     = 7687
     protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnet_cidr_blocks
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
   }
 
   ingress {
-    description = "Access to load balancer from the internet"
+    description = "Access to load balancer from https"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnet_cidr_blocks
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
   }
 
   tags = {
@@ -94,7 +94,7 @@ resource "aws_security_group" "cartography" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnet_cidr_blocks
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
   }
 
   egress {
@@ -111,7 +111,7 @@ resource "aws_security_group" "cartography" {
     from_port   = 7474
     to_port     = 7474
     protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnet_cidr_blocks
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
     self        = true
   }
 
@@ -120,7 +120,7 @@ resource "aws_security_group" "cartography" {
     from_port   = 7473
     to_port     = 7473
     protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnet_cidr_blocks
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
     self        = true
   }
 
@@ -138,7 +138,7 @@ resource "aws_security_group" "cartography" {
     from_port   = 7687
     to_port     = 7687
     protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnet_cidr_blocks
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
     self        = true
   }
 
