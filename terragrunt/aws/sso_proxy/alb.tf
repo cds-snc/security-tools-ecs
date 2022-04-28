@@ -26,7 +26,7 @@ resource "aws_lb" "pomerium" {
 }
 
 resource "aws_lb_target_group" "sso_proxy" {
-  name                 = "ecs"
+  name                 = "sso-proxy"
   port                 = 443
   protocol             = "HTTP"
   target_type          = "ip"

@@ -25,7 +25,7 @@ resource "aws_lb" "cartography" {
 }
 
 resource "aws_lb_target_group" "neo4j" {
-  name                 = "ecs"
+  name                 = "neo4j"
   port                 = 7474
   protocol             = "TCP"
   target_type          = "ip"
