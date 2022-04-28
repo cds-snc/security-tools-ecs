@@ -4,6 +4,11 @@ variable "asset_inventory_managed_accounts" {
   default     = []
 }
 
+variable "cloud_asset_inventory_vpc_peering_connection_id" {
+  description = "The VPC peering connection ID for Cloud Asset Inventory"
+  type        = string
+}
+
 variable "neo4j_image" {
   description = "(Required) The neo4j image to use"
   type        = string
