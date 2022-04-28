@@ -56,7 +56,7 @@ data "template_file" "neo4j_container_definition" {
     AWS_LOGS_GROUP         = aws_cloudwatch_log_group.neo4j.name
     AWS_LOGS_REGION        = var.region
     AWS_LOGS_STREAM_PREFIX = "${aws_ecs_cluster.neo4j.name}-task"
-    NEO4J_IMAGE            = "${var.neo4j_image}:${var.neo4j_image_tag}"
+    NEO4J_IMAGE            = "${var.neo4j_image}@${var.neo4j_image_tag}"
     NEO4J_AUTH             = aws_ssm_parameter.neo4j_auth.arn
   }
 }
