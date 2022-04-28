@@ -3,6 +3,11 @@ variable "cloud_asset_inventory_vpc_id" {
   type        = string
 }
 
+variable "cloud_asset_inventory_load_balancer_dns" {
+  description = "DNS name for Cloud Asset Inventory Load Balancer"
+  type        = string
+}
+
 variable "pomerium_client_id" {
   description = "The pomerium client id"
   type        = string
