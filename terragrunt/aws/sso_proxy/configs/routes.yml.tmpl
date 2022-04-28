@@ -16,3 +16,12 @@
           or:
             - domain:
                 is: cds-snc.ca
+
+- from: https://bolt.neo4j.security.cdssandbox.xyz
+  to: http://${CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS}:7687/
+  preserve_host_header: true
+  policy:
+      - allow:
+          or:
+            - domain:
+                is: cds-snc.ca
