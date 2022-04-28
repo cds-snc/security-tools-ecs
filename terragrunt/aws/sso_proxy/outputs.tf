@@ -1,5 +1,5 @@
 output "cloud_asset_inventory_vpc_peering_connection_id" {
-  description = "The VPC peering connection ID for Cartography"
+  description = "The VPC peering connection ID for Cloud Asset Inventory"
   value       = aws_vpc_peering_connection.cloud_asset_inventory.id
 }
 
