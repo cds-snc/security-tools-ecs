@@ -1,3 +1,8 @@
+variable "cloud_asset_inventory_vpc_id" {
+  description = "VPC ID for Cloud Asset Inventory"
+  type        = string
+}
+
 variable "pomerium_client_id" {
   description = "The pomerium client id"
   type        = string
