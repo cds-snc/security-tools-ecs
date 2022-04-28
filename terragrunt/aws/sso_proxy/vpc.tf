@@ -21,6 +21,28 @@ module "vpc" {
   billing_tag_value = var.billing_tag_value
 }
 
+resource "aws_network_acl_rule" "ephemeral_ports" {
+  network_acl_id = module.vpc.main_nacl_id
+  rule_number    = 111
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
+}
+
+resource "aws_network_acl_rule" "ephemeral_ports_egress" {
+  network_acl_id = module.vpc.main_nacl_id
+  rule_number    = 114
+  egress         = true
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE A SECURITY GROUP TO ALLOW ACCESS TO POMERIUM SSO
 # ---------------------------------------------------------------------------------------------------------------------
