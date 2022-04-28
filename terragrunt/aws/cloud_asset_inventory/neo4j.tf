@@ -22,7 +22,7 @@ resource "aws_ecs_service" "neo4j" {
   health_check_grace_period_seconds = 600
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.ecs.arn
+    target_group_arn = aws_lb_target_group.neo4j.arn
     container_name   = "neo4j"
     container_port   = 7474
   }

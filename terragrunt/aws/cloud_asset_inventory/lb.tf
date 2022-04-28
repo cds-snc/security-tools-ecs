@@ -4,9 +4,9 @@
 resource "aws_lb" "cartography" {
   #checkov:skip=CKV_AWS_152:Load Balancer: Not running in high availability mode
   name               = "cartography"
-  internal           = false
+  internal           = true
   load_balancer_type = "network"
-  subnets            = module.vpc.public_subnet_ids
+  subnets            = module.vpc.private_subnet_ids
 
   access_logs {
     bucket  = var.cbs_satellite_bucket_name
@@ -24,7 +24,7 @@ resource "aws_lb" "cartography" {
   }
 }
 
-resource "aws_lb_target_group" "ecs" {
+resource "aws_lb_target_group" "neo4j" {
   name                 = "ecs"
   port                 = 7474
   protocol             = "TCP"
@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "bolt" {
 }
 
 
-resource "aws_lb_listener" "https" {
+resource "aws_lb_listener" "neo4j" {
   load_balancer_arn = aws_lb.cartography.arn
 
   port     = 7474
@@ -63,7 +63,7 @@ resource "aws_lb_listener" "https" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.ecs.arn
+    target_group_arn = aws_lb_target_group.neo4j.arn
   }
 
   tags = {

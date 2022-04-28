@@ -26,7 +26,7 @@ resource "aws_ecs_service" "pomerium_sso_proxy" {
   health_check_grace_period_seconds = 600
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.ecs.arn
+    target_group_arn = aws_lb_target_group.sso_proxy.arn
     container_name   = "pomerium_sso_proxy"
     container_port   = 443
   }
