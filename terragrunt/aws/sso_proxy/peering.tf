@@ -6,7 +6,7 @@ resource "aws_vpc_peering_connection" "cloud_asset_inventory" {
   auto_accept   = false
 
   requester {
-    allow_remote_vpc_dns_resolution = true
+    allow_remote_vpc_dns_resolution = false
   }
 
   tags = {
@@ -14,6 +14,12 @@ resource "aws_vpc_peering_connection" "cloud_asset_inventory" {
     Terraform             = true
     Product               = var.product_name
     Side                  = "Requester"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
   }
 }
 

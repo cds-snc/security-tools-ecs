@@ -1,7 +1,3 @@
-locals {
-  routes_file = "configs/routes.yml"
-}
-
 resource "aws_ecs_cluster" "pomerium_sso_proxy" {
   name = "pomerium_sso_proxy"
 
@@ -43,6 +39,14 @@ resource "aws_ecs_service" "pomerium_sso_proxy" {
   }
 }
 
+data "template_file" "pomerium_sso_proxy_routes_policy" {
+  template = file("configs/routes.yml.tmpl")
+
+  vars = {
+    CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS = var.cloud_asset_inventory_load_balancer_dns
+  }
+}
+
 data "template_file" "pomerium_sso_proxy_container_definition" {
   template = file("container-definitions/pomerium_sso_proxy.json.tmpl")
 
@@ -52,7 +56,7 @@ data "template_file" "pomerium_sso_proxy_container_definition" {
     AWS_LOGS_REGION               = var.region
     AWS_LOGS_STREAM_PREFIX        = "${aws_ecs_cluster.pomerium_sso_proxy.name}-task"
     COOKIE_EXPIRE                 = var.session_cookie_expires_in
-    ROUTES_FILE                   = base64encode(file(local.routes_file))
+    ROUTES_FILE                   = base64encode(data.template_file.pomerium_sso_proxy_routes_policy.rendered)
     POMERIUM_CLIENT_ID            = aws_ssm_parameter.pomerium_client_id.arn
     POMERIUM_CLIENT_SECRET        = aws_ssm_parameter.pomerium_client_secret.arn
     POMERIUM_GOOGLE_CLIENT_ID     = aws_ssm_parameter.pomerium_google_client_id.arn
