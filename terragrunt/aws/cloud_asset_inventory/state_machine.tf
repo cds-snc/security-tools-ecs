@@ -1,6 +1,7 @@
 resource "aws_cloudwatch_event_rule" "asset_inventory_cartography" {
   name                = "cartography"
   schedule_expression = "cron(0 22 * * ? *)"
+  is_enabled          = false
 }
 
 resource "aws_cloudwatch_event_target" "sfn_events" {
@@ -78,7 +79,7 @@ data "aws_iam_policy_document" "asset_inventory_cartography_state_machine" {
     ]
 
     resources = [
-      aws_ecs_cluster.cartography.arn
+      "*"
     ]
   }
 
@@ -104,7 +105,7 @@ data "aws_iam_policy_document" "asset_inventory_cartography_state_machine" {
     ]
 
     resources = [
-      aws_lambda_function.cartography_launcher.arn,
+      "${aws_lambda_function.cartography_launcher.arn}:*"
     ]
   }
 
