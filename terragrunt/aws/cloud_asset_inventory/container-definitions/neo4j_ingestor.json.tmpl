@@ -33,10 +33,7 @@
     ],
     "essential" : true,
     "image" : "${NEO4J_INGESTOR_IMAGE}",
-    "entryPoint" : ["/bin/bash", "-c", join(" ", [
-      "set -ueo pipefail; echo ${ELASTICSEARCH_CONFIG_FILE_ENCODED} | base64 -d > /opt/es-index/es-index.json;",
-      "python3 /app/elastic_ingestor.py;",
-    ])],
+    "entryPoint" : ["/bin/bash", "-c", "${ENTRYPOINT_COMMAND}"],
     "logConfiguration" : {
       "logDriver" : "awslogs",
       "options" : {
