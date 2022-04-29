@@ -35,7 +35,7 @@ resource "aws_sfn_state_machine" "asset_inventory_cartography" {
 
 resource "aws_iam_role" "asset_inventory_cartography_state_machine" {
   name               = "secopsAssetInventoryNeo4JIngestorRole"
-  assume_role_policy = data.aws_iam_policy_document.service_principal.json
+  assume_role_policy = data.aws_iam_policy_document.asset_inventory_cartography_state_machine_service_principal.json
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
@@ -44,7 +44,7 @@ resource "aws_iam_role" "asset_inventory_cartography_state_machine" {
   }
 }
 
-data "aws_iam_policy_document" "service_principal" {
+data "aws_iam_policy_document" "asset_inventory_cartography_state_machine_service_principal" {
   statement {
     effect = "Allow"
 

@@ -9,6 +9,12 @@ resource "aws_ecs_cluster" "neo4j_ingestor" {
     name  = "containerInsights"
     value = "enabled"
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 data "template_file" "neo4j_ingestor_container_definition" {
