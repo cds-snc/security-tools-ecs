@@ -1,6 +1,6 @@
 locals {
   name_prefix = "${var.product_name}-${var.account_id}"
-  athena_name = "${local.name_prefix}-file-queue"
+  athena_name = "${local.name_prefix}-athena-query-results"
 }
 
 module "log_bucket" {
