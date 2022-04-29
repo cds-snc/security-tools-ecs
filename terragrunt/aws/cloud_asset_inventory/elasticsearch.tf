@@ -65,26 +65,6 @@ resource "aws_iam_service_linked_role" "es" {
   }
 }
 
-resource "aws_elasticsearch_domain_policy" "main" {
-  domain_name     = aws_elasticsearch_domain.cartography.domain_name
-  access_policies = <<POLICIES
-  {
-      "Version": "2012-10-17",
-      "Statement": [
-          {
-              "Action": "es:*",
-              "Principal": "*",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "*"
-              },
-              "Resource": "${aws_elasticsearch_domain.cartography.arn}/*"
-          }
-      ]
-  }
-  POLICIES
-}
-
 resource "aws_cloudwatch_log_resource_policy" "elasticsearch" {
   policy_name     = "CloudWatchElasticSearchLogPolicy"
   policy_document = <<CONFIG

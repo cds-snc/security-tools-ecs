@@ -30,6 +30,7 @@
 
 - from: https://kibana.security.cdssandbox.xyz
   to: https://${ELASTICSEARCH_KIBANA_ENDPOINT}
+  preserve_host_header: true
   policy:
       - allow:
           or:

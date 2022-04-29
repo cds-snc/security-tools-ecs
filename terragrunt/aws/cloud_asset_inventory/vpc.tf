@@ -111,11 +111,11 @@ resource "aws_security_group" "cartography" {
   }
 
   ingress {
-    description = "Access from the load balancer"
+    description = "Access to services running on https"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
