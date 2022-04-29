@@ -6,7 +6,7 @@
 # E203: whitespace before ':'
 # E501: line too long
 # Ignore cartography_neo4j_ingestor since it was copied from another library
-exclude = venv*, __pycache__, node_modules, cache, migrations, build, cartography_neo4j_ingestor
+exclude = venv*, __pycache__, node_modules, cache, migrations, build, neo4j_ingestor
 ignore = W503, W504, E203, E501
 max-complexity = 14
 max-line-length = 130
