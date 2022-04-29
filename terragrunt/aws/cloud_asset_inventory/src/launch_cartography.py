@@ -9,13 +9,13 @@ ssm = boto3.client("ssm")
 
 def handler(event, context):
     account_list = json.loads(
-        ssm.get_parameter(Name="asset_inventory_account_list", WithDecryption=True)[
+        ssm.get_parameter(Name="/cartography/asset_inventory_account_list", WithDecryption=True)[
             "Parameter"
         ]["Value"]
     )
     aws_profile_template = (
         "[profile {account_id}]\n"
-        "role_arn = arn:aws:iam::{account_id}:role/AssetInventorySecurityAuditRole\n"  # noqa: E501
+        "role_arn = arn:aws:iam::{account_id}:role/secopsAssetInventorySecurityAuditRole\n"  # noqa: E501
         "source_profile = default\n"
         "region = ca-central-1\n"
         "output = json\n\n"

@@ -38,6 +38,7 @@ resource "aws_security_group" "load_balancer" {
     to_port     = 7474
     protocol    = "tcp"
     cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    self        = true
   }
 
   ingress {
@@ -46,6 +47,25 @@ resource "aws_security_group" "load_balancer" {
     to_port     = 7687
     protocol    = "tcp"
     cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    self        = true
+  }
+
+  egress {
+    description = "Access from load balancer to neo4j"
+    from_port   = 7474
+    to_port     = 7474
+    protocol    = "tcp"
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    self        = true
+  }
+
+  egress {
+    description = "Access from load balancer to neo4j bolt"
+    from_port   = 7687
+    to_port     = 7687
+    protocol    = "tcp"
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    self        = true
   }
 
   ingress {
@@ -54,6 +74,7 @@ resource "aws_security_group" "load_balancer" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    self        = true
   }
 
   tags = {

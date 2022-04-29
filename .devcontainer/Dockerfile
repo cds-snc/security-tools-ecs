@@ -9,7 +9,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # Install Python tools
 RUN pip3 install --upgrade requests setuptools \
-    && pip3 install --upgrade botocore checkov pipx
+    && pip3 install --upgrade botocore checkov pipx pip-tools
 
 RUN python3 -m pipx ensurepath && pipx install aws-sso-util
     
