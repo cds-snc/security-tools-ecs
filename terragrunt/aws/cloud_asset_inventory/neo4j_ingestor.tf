@@ -60,4 +60,10 @@ resource "aws_ecs_task_definition" "neo4j_ingestor" {
 resource "aws_cloudwatch_log_group" "neo4j_ingestor" {
   name              = "/aws/ecs/neo4j_ingestor"
   retention_in_days = 14
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }

@@ -48,6 +48,12 @@ resource "aws_elasticsearch_domain" "cartography" {
 resource "aws_iam_service_linked_role" "es" {
   aws_service_name = "es.amazonaws.com"
   description      = "Allows Amazon ES to manage AWS resources for a domain on your behalf."
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_elasticsearch_domain_policy" "main" {
