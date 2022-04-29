@@ -28,8 +28,8 @@
             - domain:
                 is: cds-snc.ca
 
-- from: https://kibana.security.cdssandbox.xyz
-  to: https://${ELASTICSEARCH_KIBANA_ENDPOINT}
+- from: https://elasticsearch.security.cdssandbox.xyz
+  to: https://${ELASTICSEARCH_ENDPOINT}/
   preserve_host_header: true
   policy:
       - allow:

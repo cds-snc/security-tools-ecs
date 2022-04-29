@@ -16,7 +16,7 @@ resource "aws_elasticsearch_domain" "cartography" {
   }
 
   advanced_security_options {
-    enabled                        = true
+    enabled                        = false
     internal_user_database_enabled = true
     master_user_options {
       master_user_name     = aws_ssm_parameter.elasticsearch_user.value
@@ -52,6 +52,24 @@ resource "aws_elasticsearch_domain" "cartography" {
   depends_on = [
     aws_cloudwatch_log_resource_policy.elasticsearch,
   ]
+}
+
+resource "aws_elasticsearch_domain_policy" "main" {
+  domain_name = aws_elasticsearch_domain.cartography.domain_name
+
+  access_policies = <<POLICIES
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "es:*",
+            "Principal": "*",
+            "Effect": "Allow",
+            "Resource": "${aws_elasticsearch_domain.cartography.arn}/*"
+        }
+    ]
+}
+POLICIES
 }
 
 resource "aws_iam_service_linked_role" "es" {
