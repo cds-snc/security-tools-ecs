@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "cartography_launcher_lambda" {
       "ecs:RunTask",
     ]
     resources = [
-      aws_ecs_task_definition.cartography.arn,
+      "arn:aws:ecs:${var.region}:${var.account_id}:task-definition/${aws_ecs_task_definition.cartography.family}",
     ]
   }
 

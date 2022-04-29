@@ -7,7 +7,7 @@ locals {
   asset_inventory_admin_role       = "secopsAssetInventoryCartographyRole"
   asset_inventory_managed_accounts = var.asset_inventory_managed_accounts
   trusted_role_arns = [
-    for account in local.asset_inventory_managed_accounts : "arn:aws:iam::${account}:role/AssetInventorySecurityAuditRole"
+    for account in local.asset_inventory_managed_accounts : "arn:aws:iam::${account}:role/secopsAssetInventorySecurityAuditRole"
   ]
 }
 
@@ -58,6 +58,37 @@ resource "aws_iam_role_policy_attachment" "ec2_container_registery_policies" {
 resource "aws_iam_role_policy_attachment" "ecs_container_registery_policies" {
   role       = aws_iam_role.cartography_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+### Task execution role policy
+
+resource "aws_iam_role_policy_attachment" "cartography_task_execution_policies" {
+  role       = aws_iam_role.cartography_task_execution_role.name
+  policy_arn = aws_iam_policy.cartography_task_execution_policies.arn
+}
+
+data "aws_iam_policy_document" "cartography_task_execution_policies" {
+  statement {
+
+    effect = "Allow"
+
+    actions = [
+      "sts:AssumeRole",
+    ]
+    resources = local.trusted_role_arns
+  }
+}
+
+resource "aws_iam_policy" "cartography_task_execution_policies" {
+  name   = "CartographyTaskExecutionPolicies"
+  path   = "/"
+  policy = data.aws_iam_policy_document.cartography_task_execution_policies.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 ### WAF IAM role

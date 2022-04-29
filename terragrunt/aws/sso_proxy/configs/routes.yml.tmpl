@@ -9,7 +9,8 @@
   timeout: 30s
 
 - from: https://neo4j.security.cdssandbox.xyz
-  to: http://${CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS}:7474/
+  to: http://${CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS}:7474
+  allow_websockets: true
   preserve_host_header: true
   policy:
       - allow:
@@ -17,8 +18,9 @@
             - domain:
                 is: cds-snc.ca
 
-- from: https://bolt.neo4j.security.cdssandbox.xyz
-  to: http://${CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS}:7687/
+- from: https://bolt.security.cdssandbox.xyz
+  to: http://${CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS}:7687
+  allow_websockets: true
   preserve_host_header: true
   policy:
       - allow:

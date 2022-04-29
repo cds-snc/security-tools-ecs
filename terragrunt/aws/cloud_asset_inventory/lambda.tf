@@ -10,7 +10,7 @@ data "archive_file" "cartography_launcher" {
 resource "aws_lambda_function" "cartography_launcher" {
   filename      = "/tmp/launch_cartography.py.zip"
   function_name = "launch_cartography"
-  handler       = "lambda.handler"
+  handler       = "launch_cartography.handler"
   runtime       = "python3.8"
   timeout       = 10
   role          = aws_iam_role.cartography_launcher_lambda.arn
