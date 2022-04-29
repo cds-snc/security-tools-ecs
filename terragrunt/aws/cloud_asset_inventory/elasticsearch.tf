@@ -54,7 +54,18 @@ resource "aws_elasticsearch_domain" "cartography" {
   ]
 }
 
-resource "aws_elasticsearch_domain_policy" "main" {
+resource "aws_iam_service_linked_role" "es" {
+  aws_service_name = "es.amazonaws.com"
+  description      = "Allows Amazon ES to manage AWS resources for a domain on your behalf."
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
+}
+
+resource "aws_elasticsearch_domain_policy" "cartography" {
   domain_name = aws_elasticsearch_domain.cartography.domain_name
 
   access_policies = <<POLICIES
@@ -70,17 +81,6 @@ resource "aws_elasticsearch_domain_policy" "main" {
     ]
 }
 POLICIES
-}
-
-resource "aws_iam_service_linked_role" "es" {
-  aws_service_name = "es.amazonaws.com"
-  description      = "Allows Amazon ES to manage AWS resources for a domain on your behalf."
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-    Product               = var.product_name
-  }
 }
 
 resource "aws_cloudwatch_log_resource_policy" "elasticsearch" {
