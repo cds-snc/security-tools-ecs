@@ -9,9 +9,9 @@ ssm = boto3.client("ssm")
 
 def handler(event, context):
     account_list = json.loads(
-        ssm.get_parameter(Name="/cartography/asset_inventory_account_list", WithDecryption=True)[
-            "Parameter"
-        ]["Value"]
+        ssm.get_parameter(
+            Name="/cartography/asset_inventory_account_list", WithDecryption=True
+        )["Parameter"]["Value"]
     )
     aws_profile_template = (
         "[profile {account_id}]\n"
