@@ -8,6 +8,11 @@ variable "cloud_asset_inventory_load_balancer_dns" {
   type        = string
 }
 
+variable "elasticsearch_kibana_endpoint" {
+  description = "Endpoint of the Elasticsearch Kibana instance"
+  type        = string
+}
+
 variable "pomerium_client_id" {
   description = "The pomerium client id"
   type        = string
