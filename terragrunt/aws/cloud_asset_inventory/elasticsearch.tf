@@ -48,6 +48,10 @@ resource "aws_elasticsearch_domain" "cartography" {
     Terraform             = true
     Product               = var.product_name
   }
+
+  depends_on = [
+    aws_cloudwatch_log_resource_policy.elasticsearch,
+  ]
 }
 
 resource "aws_iam_service_linked_role" "es" {
