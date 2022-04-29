@@ -81,6 +81,29 @@ resource "aws_elasticsearch_domain_policy" "main" {
   POLICIES
 }
 
+resource "aws_cloudwatch_log_resource_policy" "elasticsearch" {
+  policy_name     = "CloudWatchElasticSearchLogPolicy"
+  policy_document = <<CONFIG
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "es.amazonaws.com"
+      },
+      "Action": [
+        "logs:PutLogEvents",
+        "logs:PutLogEventsBatch",
+        "logs:CreateLogStream"
+      ],
+      "Resource": ["${aws_cloudwatch_log_group.elasticsearch.arn}", "${aws_cloudwatch_log_group.elasticsearch.arn}/*"]
+    }
+  ]
+}
+CONFIG
+}
+
 resource "aws_cloudwatch_log_group" "elasticsearch" {
   name              = "/aws/ecs/elasticsearch"
   retention_in_days = 14
