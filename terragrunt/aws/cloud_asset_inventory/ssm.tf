@@ -3,7 +3,14 @@
 resource "random_password" "elasticsearch_password" {
   for_each = toset([var.password_change_id])
   length   = 32
-  special  = false
+  lower    = true
+  upper    = true
+  special  = true
+
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  min_special = 1
 }
 
 resource "random_password" "neo4j_password" {
