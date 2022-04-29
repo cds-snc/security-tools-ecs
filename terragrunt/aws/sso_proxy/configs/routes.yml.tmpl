@@ -27,3 +27,11 @@
           or:
             - domain:
                 is: cds-snc.ca
+
+- from: https://kibana.security.cdssandbox.xyz
+  to: https://${ELASTICSEARCH_KIBANA_ENDPOINT}
+  policy:
+      - allow:
+          or:
+            - domain:
+                is: cds-snc.ca
