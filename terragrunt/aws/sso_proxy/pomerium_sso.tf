@@ -56,6 +56,7 @@ data "template_file" "pomerium_sso_proxy_container_definition" {
     AWS_LOGS_REGION               = var.region
     AWS_LOGS_STREAM_PREFIX        = "${aws_ecs_cluster.pomerium_sso_proxy.name}-task"
     COOKIE_EXPIRE                 = var.session_cookie_expires_in
+    ELASTICSEARCH_KIBANA_ENDPOINT = var.elasticsearch_kibana_endpoint
     ROUTES_FILE                   = base64encode(data.template_file.pomerium_sso_proxy_routes_policy.rendered)
     POMERIUM_CLIENT_ID            = aws_ssm_parameter.pomerium_client_id.arn
     POMERIUM_CLIENT_SECRET        = aws_ssm_parameter.pomerium_client_secret.arn
