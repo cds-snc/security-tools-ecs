@@ -19,6 +19,11 @@ variable "neo4j_image_tag" {
   type        = string
 }
 
+variable "neo4j_ingestor_repository_url" {
+  description = "(Required) The ingestor repository URL"
+  type        = string
+}
+
 variable "password_change_id" {
   description = "(Required) Id to trigger changing the elasticsearch and neo4j password."
   type        = string

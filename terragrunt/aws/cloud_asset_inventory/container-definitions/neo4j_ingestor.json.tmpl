@@ -1,0 +1,63 @@
+[
+  {
+    "name" : "neo4j_ingestor",
+    "environment" : [
+      {
+        "name" : "NEO4J_URI",
+        "value" : "bolt://neo4j.internal.local:7687"
+      },
+      {
+        "name" : "NEO4J_USER",
+        "value" : "neo4j"
+      },
+      {
+        "name" : "ELASTIC_TLS_ENABLED",
+        "value" : "True"
+      },
+      {
+        "name" : "ELASTIC_INDEX",
+        "value" : "cartography"
+      },
+      {
+        "name" : "ELASTIC_DRY_RUN",
+        "value" : "False"
+      },
+      {
+        "name" : "ELASTIC_INDEX_SPEC",
+        "value" : "/opt/es-index/es-index.json"
+      },
+      {
+        "name" : "ELASTIC_URL",
+        "value" : "${ELASTIC_URL}"
+      }
+    ],
+    "essential" : true,
+    "image" : "${NEO4J_INGESTOR_IMAGE}",
+    "entryPoint" : ["/bin/bash", "-c", join(" ", [
+      "set -ueo pipefail; echo ${ELASTICSEARCH_CONFIG_FILE_ENCODED} | base64 -d > /opt/es-index/es-index.json;",
+      "python3 /app/elastic_ingestor.py;",
+    ])],
+    "logConfiguration" : {
+      "logDriver" : "awslogs",
+      "options" : {
+        "awslogs-group": "${AWS_LOGS_GROUP}",
+        "awslogs-region": "${AWS_LOGS_REGION}",
+        "awslogs-stream-prefix": "${AWS_LOGS_STREAM_PREFIX}"
+      }
+    },
+    "secrets" : [
+      {
+        "name" : "NEO4J_SECRETS_PASSWORD",
+        "valueFrom" : "${NEO4J_SECRETS_PASSWORD}"
+      },
+      {
+        "name" : "ELASTICSEARCH_USER",
+        "valueFrom" : "${ELASTICSEARCH_USER}"
+      },
+      {
+        "name" : "ELASTICSEARCH_PASSWORD",
+        "valueFrom" : "${ELASTICSEARCH_PASSWORD}"
+      }
+    ]
+  }
+]

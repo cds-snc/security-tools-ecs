@@ -1,0 +1,92 @@
+[
+  {
+    "Comment" : "Run daily asset inventory of cloud assets",
+    "TimeoutSeconds": 86400,
+    "StartAt" : "Get running cartography services from previous run",
+    "States" : {
+      "Get running cartography services from previous run" : {
+        "Type" : "Task",
+        "Parameters" : {
+          "Cluster" : "${CARTOGRAPHY_CLUSTER}"
+        },
+        "Resource" : "arn:aws:states:::aws-sdk:ecs:listTasks",
+        "Next" : "Is previous cartography still running"
+      },
+      "Is previous cartography still running" : {
+        "Type" : "Choice",
+        "Choices" : [
+          {
+            "Variable" : "$.TaskArns[0]",
+            "IsPresent" : true,
+            "Next" : "Pass"
+          }
+        ],
+        "Default" : "Launch cartography"
+      },
+      "Pass" : {
+        "Type" : "Pass",
+        "End" : true
+      },
+      "Launch cartography" : {
+        "Type" : "Task",
+        "Resource" : "arn:aws:states:::lambda:invoke",
+        "OutputPath" : "$.Payload",
+        "Parameters" : {
+          "FunctionName" : "${LAUNCH_CARTOGRAPHY_LAMBDA}"
+        },
+        "Retry" : [
+          {
+            "ErrorEquals" : [
+              "Lambda.ServiceException",
+              "Lambda.AWSLambdaException",
+              "Lambda.SdkClientException"
+            ],
+            "IntervalSeconds" : 2,
+            "MaxAttempts" : 6,
+            "BackoffRate" : 2
+          }
+        ],
+        "Next" : "Wait for scans to run"
+      },
+      "Wait for scans to run" : {
+        "Type" : "Wait",
+        "Seconds" : 3600,
+        "Next" : "Get running cartography services"
+      },
+      "Get running cartography services" : {
+        "Type" : "Task",
+        "Parameters" : {
+          "Cluster" : "${CARTOGRAPHY_CLUSTER}"
+        },
+        "Resource" : "arn:aws:states:::aws-sdk:ecs:listTasks",
+        "Next" : "Check if cartography is still running"
+      },
+      "Check if cartography is still running" : {
+        "Type" : "Choice",
+        "Choices" : [
+          {
+            "Variable" : "$.TaskArns[0]",
+            "IsPresent" : true,
+            "Next" : "Wait"
+          }
+        ],
+        "Default" : "Ingest data from Neo4j to Elasticsearch"
+      },
+      "Ingest data from Neo4j to Elasticsearch" : {
+        "Type" : "Task",
+        "Resource" : "arn:aws:states:::ecs:runTask",
+        "Parameters" : {
+          "LaunchType" : "FARGATE",
+          "Cluster" : "${NEO4J_INGESTOR_CLUSTER}",
+          "TaskDefinition" : "${NEO4J_INGESTOR_TASK_DEF}"
+        },
+        "End" : true
+      },
+      "Wait" : {
+        "Type" : "Wait",
+        "Seconds" : 1800,
+        "Next" : "Get running cartography services"
+      }
+    }
+  }
+]

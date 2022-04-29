@@ -45,7 +45,7 @@ EOF
 
 while IFS= read -r AWS_PROFILE
 do
-  if [[ "$AWS_PROFILE" == *".AdministratorAccess"* ]] && [[ "$AWS_PROFILE" == *"scratch"* ]]; then
+  if [[ "$AWS_PROFILE" == *".AdministratorAccess"* ]]; then
     echo -e "\033[0;33m⚡\033[0m Onboard account \033[0;35m$AWS_PROFILE\033[0m"
     ASSUMED_ROLE="$(aws --profile $AWS_PROFILE sts get-caller-identity | jq -r '.Arn')"
     echo -e "\033[0;32m✔\033[0m Assumed role via SSO: $ASSUMED_ROLE"
