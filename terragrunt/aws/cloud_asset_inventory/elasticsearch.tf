@@ -16,7 +16,7 @@ resource "aws_elasticsearch_domain" "cartography" {
   }
 
   advanced_security_options {
-    enabled                        = false
+    enabled                        = true
     internal_user_database_enabled = true
     master_user_options {
       master_user_name     = aws_ssm_parameter.elasticsearch_user.value

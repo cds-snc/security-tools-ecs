@@ -1,11 +1,12 @@
 # All passwords in this file are set to rotate automatically every month.
 # Inspired by https://www.daringway.com/how-to-rotate-random-passwords-in-terraform/
 resource "random_password" "elasticsearch_password" {
-  for_each = toset([var.password_change_id])
-  length   = 32
-  lower    = true
-  upper    = true
-  special  = true
+  for_each         = toset([var.password_change_id])
+  length           = 32
+  lower            = true
+  upper            = true
+  special          = true
+  override_special = "%*()-_[]{}<>" # Allowed special characters
 
   min_lower   = 1
   min_upper   = 1
