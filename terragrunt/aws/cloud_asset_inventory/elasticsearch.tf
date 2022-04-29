@@ -101,7 +101,7 @@ resource "aws_cloudwatch_log_resource_policy" "elasticsearch" {
         "logs:PutLogEventsBatch",
         "logs:CreateLogStream"
       ],
-      "Resource": ["${aws_cloudwatch_log_group.elasticsearch.arn}", "${aws_cloudwatch_log_group.elasticsearch.arn}:log-group:${aws_cloudwatch_log_group.elasticsearch.name}:log-stream:*"]
+      "Resource": ["${aws_cloudwatch_log_group.elasticsearch.arn}", "${aws_cloudwatch_log_group.elasticsearch.arn}:*"]
     }
   ]
 }

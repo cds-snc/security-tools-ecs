@@ -12,3 +12,8 @@ output "elasticsearch_cartography_endpoint" {
   description = "The endpoint of the Elasticsearch Cartography instance"
   value       = aws_elasticsearch_domain.cartography.endpoint
 }
+
+output "elasticsearch_kibana_endpoint" {
+  description = "The endpoint of the Elasticsearch Kibana instance"
+  value       = aws_elasticsearch_domain.cartography.kibana_endpoint
+}
