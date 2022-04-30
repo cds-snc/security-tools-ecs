@@ -70,7 +70,7 @@ resource "aws_wafv2_web_acl" "sso_proxy_waf" {
     priority = 30
 
     override_action {
-      none {}
+      count {}
     }
 
     statement {
