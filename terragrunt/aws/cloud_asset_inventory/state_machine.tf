@@ -19,7 +19,6 @@ data "template_file" "asset_inventory_cartography_state_machine" {
     CARTOGRAPHY_TASK_DEF       = aws_ecs_task_definition.cartography.arn
     NEO4J_INGESTOR_CLUSTER     = aws_ecs_cluster.neo4j_ingestor.arn
     NEO4J_INGESTOR_TASK_DEF    = aws_ecs_task_definition.neo4j_ingestor.arn
-    LAUNCH_CARTOGRAPHY_LAMBDA  = "${aws_lambda_function.cartography_launcher.arn}:$LATEST"
     SECURITY_GROUPS            = aws_security_group.cartography.id
     SUBNETS                    = join(", ", [for subnet in module.vpc.private_subnet_ids : subnet])
   }
