@@ -5,9 +5,12 @@ curl -sqL -o aws_credentials.json http://169.254.170.2/$AWS_CONTAINER_CREDENTIAL
 
 mkdir -p ~/.aws/
 
-echo $AWS_PROFILE_DATA | base64 -d > /config/role_config
-
 cat <<EOF >> /config/role_config
+[profile $AWS_ACCOUNT]
+role_arn = arn:aws:iam::$AWS_ACCOUNT:role/secopsAssetInventorySecurityAuditRole
+source_profile = default
+region = ca-central-1
+output = json
 
 [default]
 region = ca-central-1
@@ -20,3 +23,4 @@ EOF
 echo "AWS configuration complete, launching cartography"
 
 cartography --neo4j-uri ${NEO4J_URI} --neo4j-user ${NEO4J_USER} --neo4j-password-env-var NEO4J_SECRETS_PASSWORD --aws-sync-all-profiles
+exit 0

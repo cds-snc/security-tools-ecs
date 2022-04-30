@@ -74,8 +74,9 @@ resource "aws_ssm_parameter" "elasticsearch_password" {
 }
 
 resource "aws_ssm_parameter" "asset_inventory_account_list" {
+  #checkov:skip=CKV2_AWS_34:Encryption: Not required
   name  = "/${var.ssm_prefix}/asset_inventory_account_list"
-  type  = "SecureString"
+  type  = "StringList"
   value = jsonencode(var.asset_inventory_managed_accounts)
 
   tags = {
