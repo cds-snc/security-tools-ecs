@@ -22,6 +22,32 @@ module "vpc" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
+# ALLOW HTTP IN SO THAT TRAFFIC CAN BE REDIRECTED TO HTTPS
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_network_acl_rule" "http_egress" {
+  network_acl_id = module.vpc.main_nacl_id
+  rule_number    = 112
+  egress         = true
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 80
+  to_port        = 80
+}
+
+resource "aws_network_acl_rule" "http_ingress" {
+  network_acl_id = module.vpc.main_nacl_id
+  rule_number    = 113
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 80
+  to_port        = 80
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
 # CREATE A SECURITY GROUP TO ALLOW ACCESS TO POMERIUM SSO
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -42,6 +68,22 @@ resource "aws_security_group" "pomerium" {
     description = "Access to the internet"
     from_port   = 443
     to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Access to the http to https load balancer listener"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    self        = true
+  }
+
+  ingress {
+    description = "Access to load balancer from the http to redirect to https"
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

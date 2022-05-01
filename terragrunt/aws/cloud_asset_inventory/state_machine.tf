@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "asset_inventory_cartography" {
   name                = "cartography"
   schedule_expression = "cron(0 22 * * ? *)"
-  is_enabled          = false
+  is_enabled          = true
 }
 
 resource "aws_cloudwatch_event_target" "sfn_events" {
