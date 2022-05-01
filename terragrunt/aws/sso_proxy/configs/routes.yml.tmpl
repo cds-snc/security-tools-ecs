@@ -21,6 +21,7 @@
 - from: https://bolt.security.cdssandbox.xyz
   to: http://${CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS}:7687
   allow_websockets: true
+  preserve_host_header: true
   allow_public_unauthenticated_access: true
   policy:
       - allow:
