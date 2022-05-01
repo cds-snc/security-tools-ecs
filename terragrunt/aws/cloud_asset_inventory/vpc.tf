@@ -53,7 +53,7 @@ resource "aws_security_group" "cartography" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [var.sso_proxy_cidr]
+    cidr_blocks = concat(module.vpc.private_subnet_cidr_blocks, [var.sso_proxy_cidr])
   }
 
   egress {
