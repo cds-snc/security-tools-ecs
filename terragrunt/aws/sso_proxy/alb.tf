@@ -44,6 +44,11 @@ resource "aws_lb_target_group" "sso_proxy" {
     matcher             = "200-399"
   }
 
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 60
+  }
+
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true

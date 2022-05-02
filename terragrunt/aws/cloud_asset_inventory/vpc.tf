@@ -23,68 +23,6 @@ module "vpc" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# CREATE A SECURITY GROUP TO ALLOW ACCESS TO THE LOAD BALANCER
-# ---------------------------------------------------------------------------------------------------------------------
-
-resource "aws_security_group" "load_balancer" {
-  #checkov:skip=CKV2_AWS_5:This security group will be attached to a lb in a future PR
-  name        = "load_balancer"
-  description = "Allow inbound traffic to cartography load balancer"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    description = "Access to load balancer neo4j"
-    from_port   = 7474
-    to_port     = 7474
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
-    self        = true
-  }
-
-  ingress {
-    description = "Access to load balancer neo4j bolt"
-    from_port   = 7687
-    to_port     = 7687
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
-    self        = true
-  }
-
-  egress {
-    description = "Access from load balancer to neo4j"
-    from_port   = 7474
-    to_port     = 7474
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
-    self        = true
-  }
-
-  egress {
-    description = "Access from load balancer to neo4j bolt"
-    from_port   = 7687
-    to_port     = 7687
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
-    self        = true
-  }
-
-  ingress {
-    description = "Access to load balancer from https"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
-    self        = true
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-    Product               = var.product_name
-  }
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
 # CREATE A SECURITY GROUP TO ALLOW ACCESS TO CARTOGRAPHY
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -111,11 +49,11 @@ resource "aws_security_group" "cartography" {
   }
 
   ingress {
-    description = "Access from the load balancer"
+    description = "Access to services running on https"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    cidr_blocks = concat(module.vpc.private_subnet_cidr_blocks, [var.sso_proxy_cidr])
   }
 
   egress {

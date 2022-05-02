@@ -44,7 +44,7 @@ data "template_file" "pomerium_sso_proxy_routes_policy" {
 
   vars = {
     CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS = var.cloud_asset_inventory_load_balancer_dns
-    ELASTICSEARCH_KIBANA_ENDPOINT           = var.elasticsearch_kibana_endpoint
+    ELASTICSEARCH_ENDPOINT                  = var.elasticsearch_cartography_endpoint
   }
 }
 

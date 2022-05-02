@@ -1,11 +1,12 @@
 # All passwords in this file are set to rotate automatically every month.
 # Inspired by https://www.daringway.com/how-to-rotate-random-passwords-in-terraform/
 resource "random_password" "elasticsearch_password" {
-  for_each = toset([var.password_change_id])
-  length   = 32
-  lower    = true
-  upper    = true
-  special  = true
+  for_each         = toset([var.password_change_id])
+  length           = 32
+  lower            = true
+  upper            = true
+  special          = true
+  override_special = "%*()-_[]{}<>" # Allowed special characters
 
   min_lower   = 1
   min_upper   = 1
@@ -73,8 +74,9 @@ resource "aws_ssm_parameter" "elasticsearch_password" {
 }
 
 resource "aws_ssm_parameter" "asset_inventory_account_list" {
+  #checkov:skip=CKV2_AWS_34:Encryption: Not required
   name  = "/${var.ssm_prefix}/asset_inventory_account_list"
-  type  = "SecureString"
+  type  = "StringList"
   value = jsonencode(var.asset_inventory_managed_accounts)
 
   tags = {

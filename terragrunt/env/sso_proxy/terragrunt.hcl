@@ -26,6 +26,7 @@ inputs = {
   session_cookie_expires_in               = "8h"
   cloud_asset_inventory_vpc_id            = dependency.cloud_asset_inventory.outputs.cloud_asset_inventory_vpc_id
   cloud_asset_inventory_load_balancer_dns = dependency.cloud_asset_inventory.outputs.cloud_asset_inventory_load_balancer_dns
+  elasticsearch_cartography_endpoint      = dependency.cloud_asset_inventory.outputs.elasticsearch_cartography_endpoint
   elasticsearch_kibana_endpoint           = dependency.cloud_asset_inventory.outputs.elasticsearch_kibana_endpoint
 }
 

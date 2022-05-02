@@ -12,6 +12,7 @@
   to: http://${CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS}:7474
   allow_websockets: true
   preserve_host_header: true
+  cors_allow_preflight: true
   policy:
       - allow:
           or:
@@ -22,14 +23,18 @@
   to: http://${CLOUD_ASSET_INVENTORY_LOAD_BALANCER_DNS}:7687
   allow_websockets: true
   preserve_host_header: true
+  cors_allow_preflight: true
+  set_response_headers:
+    Access-Control-Allow-Origin: https://neo4j.security.cdssandbox.xyz
   policy:
       - allow:
           or:
             - domain:
                 is: cds-snc.ca
 
-- from: https://kibana.security.cdssandbox.xyz
-  to: https://${ELASTICSEARCH_KIBANA_ENDPOINT}
+- from: https://elasticsearch.security.cdssandbox.xyz
+  to: https://${ELASTICSEARCH_ENDPOINT}/
+  preserve_host_header: true
   policy:
       - allow:
           or:

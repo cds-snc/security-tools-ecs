@@ -1,6 +1,7 @@
 resource "aws_cloudwatch_event_rule" "asset_inventory_cartography" {
   name                = "cartography"
   schedule_expression = "cron(0 22 * * ? *)"
+  is_enabled          = true
 }
 
 resource "aws_cloudwatch_event_target" "sfn_events" {
@@ -13,10 +14,13 @@ data "template_file" "asset_inventory_cartography_state_machine" {
   template = file("state-machines/cartography.json.tmpl")
 
   vars = {
-    CARTOGRAPHY_CLUSTER       = aws_ecs_cluster.cartography.name
-    NEO4J_INGESTOR_CLUSTER    = aws_ecs_cluster.neo4j_ingestor.name
-    NEO4J_INGESTOR_TASK_DEF   = aws_ecs_task_definition.neo4j_ingestor.family
-    LAUNCH_CARTOGRAPHY_LAMBDA = "${aws_lambda_function.cartography_launcher.arn}:$LATEST"
+    CARTOGRAPHY_CONTAINER_NAME = aws_ecs_cluster.cartography.name
+    CARTOGRAPHY_CLUSTER        = aws_ecs_cluster.cartography.arn
+    CARTOGRAPHY_TASK_DEF       = aws_ecs_task_definition.cartography.arn
+    NEO4J_INGESTOR_CLUSTER     = aws_ecs_cluster.neo4j_ingestor.arn
+    NEO4J_INGESTOR_TASK_DEF    = aws_ecs_task_definition.neo4j_ingestor.arn
+    SECURITY_GROUPS            = aws_security_group.cartography.id
+    SUBNETS                    = join(", ", [for subnet in module.vpc.private_subnet_ids : subnet])
   }
 }
 
@@ -70,42 +74,60 @@ resource "aws_iam_role_policy_attachment" "asset_inventory_cartography_state_mac
 
 data "aws_iam_policy_document" "asset_inventory_cartography_state_machine" {
   statement {
-
     effect = "Allow"
+    actions = [
+      "iam:GetRole",
+      "iam:PassRole"
+    ]
+    resources = [
+      aws_iam_role.cartography_task_execution_role.arn,
+      aws_iam_role.cartography_container_execution_role.arn,
+    ]
+  }
 
+  statement {
+    effect = "Allow"
     actions = [
       "ecs:ListTasks"
     ]
-
     resources = [
-      aws_ecs_cluster.cartography.arn
+      "*"
     ]
   }
 
   statement {
-
     effect = "Allow"
-
     actions = [
       "ecs:RunTask"
     ]
-
     resources = [
-      aws_ecs_task_definition.neo4j_ingestor.arn
+      aws_ecs_task_definition.cartography.arn,
+      aws_ecs_task_definition.neo4j_ingestor.arn,
+      "arn:aws:ecs:${var.region}:${var.account_id}:task-definition/${aws_ecs_task_definition.cartography.family}",
+      "arn:aws:ecs:${var.region}:${var.account_id}:task-definition/${aws_ecs_task_definition.neo4j_ingestor.family}",
     ]
   }
 
   statement {
-
     effect = "Allow"
-
     actions = [
-      "lambda:InvokeFunction"
+      "events:PutTargets",
+      "events:PutRule",
+      "events:DescribeRule"
     ]
-
     resources = [
-      aws_lambda_function.cartography_launcher.arn,
+      "arn:aws:events:${var.region}:${var.account_id}:*"
     ]
   }
 
+  statement {
+    effect = "Allow"
+    actions = [
+      "ssm:DescribeParameters",
+      "ssm:GetParameter",
+    ]
+    resources = [
+      aws_ssm_parameter.asset_inventory_account_list.arn,
+    ]
+  }
 }

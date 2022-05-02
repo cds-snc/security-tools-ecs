@@ -147,6 +147,7 @@ def main():
     # ingestor.push_results(queries_results)
 
     logger.info("Ingestion completed successfully")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
