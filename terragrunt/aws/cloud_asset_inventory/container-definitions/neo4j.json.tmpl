@@ -21,6 +21,13 @@
     ],
     "essential" : true,
     "image" : "${NEO4J_IMAGE}",
+    "mountPoints" : [
+      {
+        "sourceVolume" : "${EFS_VOLUME_NAME}",
+        "containerPath" : "/var/lib/neo4j/data",
+        "readOnly" : false
+      }
+    ],
     "logConfiguration" : {
       "logDriver" : "awslogs",
       "options" : {

@@ -14,10 +14,12 @@ data "template_file" "asset_inventory_cartography_state_machine" {
   template = file("state-machines/cartography.json.tmpl")
 
   vars = {
-    CARTOGRAPHY_CONTAINER_NAME = aws_ecs_cluster.cartography.name
-    CARTOGRAPHY_CLUSTER        = aws_ecs_cluster.cartography.arn
+    CARTOGRAPHY_CONTAINER_NAME = aws_ecs_task_definition.cartography.family
+    CARTOGRAPHY_CLUSTER        = aws_ecs_cluster.cloud_asset_discovery.arn
     CARTOGRAPHY_TASK_DEF       = aws_ecs_task_definition.cartography.arn
-    NEO4J_INGESTOR_CLUSTER     = aws_ecs_cluster.neo4j_ingestor.arn
+    MIN_ECS_CAPACITY           = var.min_ecs_capacity
+    MAX_ECS_CAPACITY           = var.max_ecs_capacity
+    NEO4J_INGESTOR_CLUSTER     = aws_ecs_cluster.cloud_asset_discovery.arn
     NEO4J_INGESTOR_TASK_DEF    = aws_ecs_task_definition.neo4j_ingestor.arn
     SECURITY_GROUPS            = aws_security_group.cartography.id
     SUBNETS                    = join(", ", [for subnet in module.vpc.private_subnet_ids : subnet])
@@ -82,6 +84,16 @@ data "aws_iam_policy_document" "asset_inventory_cartography_state_machine" {
     resources = [
       aws_iam_role.cartography_task_execution_role.arn,
       aws_iam_role.cartography_container_execution_role.arn,
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "states:StartExecution",
+    ]
+    resources = [
+      aws_sfn_state_machine.asset_inventory_cartography.arn,
     ]
   }
 

@@ -1,21 +1,11 @@
-resource "aws_ecs_cluster" "neo4j" {
-  name = "neo4j"
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-    Product               = var.product_name
-  }
+locals {
+  neo4j_service_name = "neo4j"
+  efs_volume_name    = "neo4j-efs-volume"
 }
 
 resource "aws_ecs_service" "neo4j" {
-  name                              = "neo4j"
-  cluster                           = aws_ecs_cluster.neo4j.id
+  name                              = local.neo4j_service_name
+  cluster                           = aws_ecs_cluster.cloud_asset_discovery.id
   task_definition                   = aws_ecs_task_definition.neo4j.arn
   desired_count                     = 1
   launch_type                       = "FARGATE"
@@ -55,14 +45,15 @@ data "template_file" "neo4j_container_definition" {
   vars = {
     AWS_LOGS_GROUP         = aws_cloudwatch_log_group.neo4j.name
     AWS_LOGS_REGION        = var.region
-    AWS_LOGS_STREAM_PREFIX = "${aws_ecs_cluster.neo4j.name}-task"
+    AWS_LOGS_STREAM_PREFIX = "${local.neo4j_service_name}-task"
+    EFS_VOLUME_NAME        = local.efs_volume_name
     NEO4J_IMAGE            = "${var.neo4j_image}:${var.neo4j_image_tag}"
     NEO4J_AUTH             = aws_ssm_parameter.neo4j_auth.arn
   }
 }
 
 resource "aws_ecs_task_definition" "neo4j" {
-  family                   = "neo4j"
+  family                   = local.neo4j_service_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
@@ -74,6 +65,13 @@ resource "aws_ecs_task_definition" "neo4j" {
 
   container_definitions = data.template_file.neo4j_container_definition.rendered
 
+  volume {
+    name = local.efs_volume_name
+    efs_volume_configuration {
+      file_system_id = aws_efs_file_system.neo4j.id
+    }
+  }
+
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
@@ -82,7 +80,7 @@ resource "aws_ecs_task_definition" "neo4j" {
 }
 
 resource "aws_cloudwatch_log_group" "neo4j" {
-  name              = "/aws/ecs/neo4j"
+  name              = "/aws/ecs/${local.neo4j_service_name}"
   retention_in_days = 14
 
   tags = {

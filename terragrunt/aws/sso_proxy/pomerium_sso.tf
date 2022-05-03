@@ -1,21 +1,10 @@
-resource "aws_ecs_cluster" "pomerium_sso_proxy" {
-  name = "pomerium_sso_proxy"
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-    Product               = var.product_name
-  }
+locals {
+  pomerium_sso_proxy_service_name = "pomerium_sso_proxy"
 }
 
 resource "aws_ecs_service" "pomerium_sso_proxy" {
-  name                              = "pomerium_sso_proxy"
-  cluster                           = aws_ecs_cluster.pomerium_sso_proxy.id
+  name                              = local.pomerium_sso_proxy_service_name
+  cluster                           = aws_ecs_cluster.sso_proxy.id
   task_definition                   = aws_ecs_task_definition.pomerium_sso_proxy.arn
   desired_count                     = 1
   launch_type                       = "FARGATE"
@@ -55,7 +44,7 @@ data "template_file" "pomerium_sso_proxy_container_definition" {
     AUTHENTICATE_SERVICE_URL      = "https://auth.${var.domain_name}"
     AWS_LOGS_GROUP                = aws_cloudwatch_log_group.pomerium_sso_proxy.name
     AWS_LOGS_REGION               = var.region
-    AWS_LOGS_STREAM_PREFIX        = "${aws_ecs_cluster.pomerium_sso_proxy.name}-task"
+    AWS_LOGS_STREAM_PREFIX        = "${local.pomerium_sso_proxy_service_name}-task"
     COOKIE_EXPIRE                 = var.session_cookie_expires_in
     ROUTES_FILE                   = base64encode(data.template_file.pomerium_sso_proxy_routes_policy.rendered)
     POMERIUM_CLIENT_ID            = aws_ssm_parameter.pomerium_client_id.arn
@@ -67,7 +56,7 @@ data "template_file" "pomerium_sso_proxy_container_definition" {
 }
 
 resource "aws_ecs_task_definition" "pomerium_sso_proxy" {
-  family                   = "pomerium_sso_proxy"
+  family                   = local.pomerium_sso_proxy_service_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
@@ -87,7 +76,7 @@ resource "aws_ecs_task_definition" "pomerium_sso_proxy" {
 }
 
 resource "aws_cloudwatch_log_group" "pomerium_sso_proxy" {
-  name              = "/aws/ecs/pomerium_sso_proxy"
+  name              = "/aws/ecs/${local.pomerium_sso_proxy_service_name}"
   retention_in_days = 14
 
   tags = {

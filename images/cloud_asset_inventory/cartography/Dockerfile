@@ -4,7 +4,6 @@ RUN /usr/sbin/adduser -g python -D python
 RUN apk add jq curl
 
 RUN mkdir -p /config
-VOLUME /config
 WORKDIR /config
 
 USER python
