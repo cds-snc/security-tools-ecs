@@ -6,11 +6,12 @@ data "template_file" "cartography_container_definition" {
   template = file("container-definitions/cartography.json.tmpl")
 
   vars = {
-    AWS_LOGS_GROUP         = aws_cloudwatch_log_group.cartography.name
-    AWS_LOGS_REGION        = var.region
-    AWS_LOGS_STREAM_PREFIX = "${local.cartography_service_name}-task"
-    CARTOGRAPHY_IMAGE      = "${var.cartography_repository_url}:latest"
-    NEO4J_SECRETS_PASSWORD = aws_ssm_parameter.neo4j_password.arn
+    AWS_LOGS_GROUP           = aws_cloudwatch_log_group.cartography.name
+    AWS_LOGS_REGION          = var.region
+    AWS_LOGS_STREAM_PREFIX   = "${local.cartography_service_name}-task"
+    CARTOGRAPHY_IMAGE        = "${var.cartography_repository_url}:latest"
+    CARTOGRAPHY_SERVICE_NAME = local.cartography_service_name
+    NEO4J_SECRETS_PASSWORD   = aws_ssm_parameter.neo4j_password.arn
   }
 }
 

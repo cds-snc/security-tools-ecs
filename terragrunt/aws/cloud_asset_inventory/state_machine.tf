@@ -14,15 +14,16 @@ data "template_file" "asset_inventory_cartography_state_machine" {
   template = file("state-machines/cartography.json.tmpl")
 
   vars = {
-    CARTOGRAPHY_CONTAINER_NAME = aws_ecs_task_definition.cartography.family
-    CARTOGRAPHY_CLUSTER        = aws_ecs_cluster.cloud_asset_discovery.arn
-    CARTOGRAPHY_TASK_DEF       = aws_ecs_task_definition.cartography.arn
-    MIN_ECS_CAPACITY           = var.min_ecs_capacity
-    MAX_ECS_CAPACITY           = var.max_ecs_capacity
-    NEO4J_INGESTOR_CLUSTER     = aws_ecs_cluster.cloud_asset_discovery.arn
-    NEO4J_INGESTOR_TASK_DEF    = aws_ecs_task_definition.neo4j_ingestor.arn
-    SECURITY_GROUPS            = aws_security_group.cartography.id
-    SUBNETS                    = join(", ", [for subnet in module.vpc.private_subnet_ids : subnet])
+
+    CARTOGRAPHY_SERVICE_NAME = local.cartography_service_name
+    CARTOGRAPHY_CLUSTER      = aws_ecs_cluster.cloud_asset_discovery.arn
+    CARTOGRAPHY_TASK_DEF     = aws_ecs_task_definition.cartography.arn
+    MIN_ECS_CAPACITY         = var.min_ecs_capacity
+    MAX_ECS_CAPACITY         = var.max_ecs_capacity
+    NEO4J_INGESTOR_CLUSTER   = aws_ecs_cluster.cloud_asset_discovery.arn
+    NEO4J_INGESTOR_TASK_DEF  = aws_ecs_task_definition.neo4j_ingestor.arn
+    SECURITY_GROUPS          = aws_security_group.cartography.id
+    SUBNETS                  = join(", ", [for subnet in module.vpc.private_subnet_ids : subnet])
   }
 }
 
