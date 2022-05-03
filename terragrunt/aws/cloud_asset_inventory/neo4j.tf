@@ -68,7 +68,8 @@ resource "aws_ecs_task_definition" "neo4j" {
   volume {
     name = local.efs_volume_name
     efs_volume_configuration {
-      file_system_id = aws_efs_file_system.neo4j.id
+      file_system_id     = aws_efs_file_system.neo4j.id
+      transit_encryption = "ENABLED"
     }
   }
 

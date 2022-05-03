@@ -1,4 +1,6 @@
 resource "aws_efs_file_system" "neo4j" {
+  encrypted = true
+
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
