@@ -2,6 +2,12 @@ resource "aws_cloudwatch_event_rule" "asset_inventory_cartography" {
   name                = "cartography"
   schedule_expression = "cron(0 22 * * ? *)"
   is_enabled          = true
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_cloudwatch_event_target" "sfn_events" {
@@ -68,6 +74,12 @@ resource "aws_iam_policy" "asset_inventory_cartography_state_machine" {
   name   = "CartographyStateMachineECSLambda"
   path   = "/"
   policy = data.aws_iam_policy_document.asset_inventory_cartography_state_machine.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "asset_inventory_cartography_state_machine" {
