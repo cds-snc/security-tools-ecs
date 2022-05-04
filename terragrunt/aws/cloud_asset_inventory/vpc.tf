@@ -33,7 +33,15 @@ resource "aws_security_group" "cartography" {
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    description = "Access to efs"
+    description = "Allow NFS traffic out from ECS to mount target"
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+  }
+
+  egress {
+    description = "Allow NFS traffic into mount target from ECS"
     from_port   = 2049
     to_port     = 2049
     protocol    = "tcp"

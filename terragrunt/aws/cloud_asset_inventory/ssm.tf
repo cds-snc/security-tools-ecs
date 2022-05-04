@@ -6,7 +6,7 @@ resource "random_password" "elasticsearch_password" {
   lower            = true
   upper            = true
   special          = true
-  override_special = "%*()-_[]{}<>" # Allowed special characters
+  override_special = "%*()-_{}<>" # Allowed special characters that dont overlap with ip address and http RFC's
 
   min_lower   = 1
   min_upper   = 1

@@ -2,6 +2,12 @@ resource "aws_cloudwatch_event_rule" "asset_inventory_cartography" {
   name                = "cartography"
   schedule_expression = "cron(0 22 * * ? *)"
   is_enabled          = true
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_cloudwatch_event_target" "sfn_events" {
@@ -14,13 +20,16 @@ data "template_file" "asset_inventory_cartography_state_machine" {
   template = file("state-machines/cartography.json.tmpl")
 
   vars = {
-    CARTOGRAPHY_CONTAINER_NAME = aws_ecs_cluster.cartography.name
-    CARTOGRAPHY_CLUSTER        = aws_ecs_cluster.cartography.arn
-    CARTOGRAPHY_TASK_DEF       = aws_ecs_task_definition.cartography.arn
-    NEO4J_INGESTOR_CLUSTER     = aws_ecs_cluster.neo4j_ingestor.arn
-    NEO4J_INGESTOR_TASK_DEF    = aws_ecs_task_definition.neo4j_ingestor.arn
-    SECURITY_GROUPS            = aws_security_group.cartography.id
-    SUBNETS                    = join(", ", [for subnet in module.vpc.private_subnet_ids : subnet])
+
+    CARTOGRAPHY_SERVICE_NAME = local.cartography_service_name
+    CARTOGRAPHY_CLUSTER      = aws_ecs_cluster.cloud_asset_discovery.arn
+    CARTOGRAPHY_TASK_DEF     = aws_ecs_task_definition.cartography.arn
+    MIN_ECS_CAPACITY         = var.min_ecs_capacity
+    MAX_ECS_CAPACITY         = var.max_ecs_capacity
+    NEO4J_INGESTOR_CLUSTER   = aws_ecs_cluster.cloud_asset_discovery.arn
+    NEO4J_INGESTOR_TASK_DEF  = aws_ecs_task_definition.neo4j_ingestor.arn
+    SECURITY_GROUPS          = aws_security_group.cartography.id
+    SUBNETS                  = join(", ", [for subnet in module.vpc.private_subnet_ids : subnet])
   }
 }
 
@@ -65,6 +74,12 @@ resource "aws_iam_policy" "asset_inventory_cartography_state_machine" {
   name   = "CartographyStateMachineECSLambda"
   path   = "/"
   policy = data.aws_iam_policy_document.asset_inventory_cartography_state_machine.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "asset_inventory_cartography_state_machine" {
@@ -82,6 +97,16 @@ data "aws_iam_policy_document" "asset_inventory_cartography_state_machine" {
     resources = [
       aws_iam_role.cartography_task_execution_role.arn,
       aws_iam_role.cartography_container_execution_role.arn,
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "states:StartExecution",
+    ]
+    resources = [
+      aws_sfn_state_machine.asset_inventory_cartography.arn,
     ]
   }
 

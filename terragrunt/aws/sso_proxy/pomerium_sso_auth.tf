@@ -1,21 +1,10 @@
-resource "aws_ecs_cluster" "pomerium_sso_proxy_auth" {
-  name = "pomerium_sso_proxy_auth"
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-    Product               = var.product_name
-  }
+locals {
+  pomerium_sso_proxy_auth_service_name = "pomerium_sso_proxy_auth"
 }
 
 resource "aws_ecs_service" "pomerium_sso_proxy_auth" {
-  name            = "pomerium_sso_proxy_auth"
-  cluster         = aws_ecs_cluster.pomerium_sso_proxy_auth.id
+  name            = local.pomerium_sso_proxy_auth_service_name
+  cluster         = aws_ecs_cluster.sso_proxy.id
   task_definition = aws_ecs_task_definition.pomerium_sso_proxy_auth.arn
   desired_count   = 1
   launch_type     = "FARGATE"
@@ -42,7 +31,7 @@ data "template_file" "pomerium_sso_proxy_auth_container_definition" {
   vars = {
     AWS_LOGS_GROUP                = aws_cloudwatch_log_group.pomerium_sso_proxy_auth.name
     AWS_LOGS_REGION               = var.region
-    AWS_LOGS_STREAM_PREFIX        = "${aws_ecs_cluster.pomerium_sso_proxy_auth.name}-task"
+    AWS_LOGS_STREAM_PREFIX        = "${local.pomerium_sso_proxy_auth_service_name}-task"
     POMERIUM_CLIENT_ID            = aws_ssm_parameter.pomerium_client_id.arn
     POMERIUM_CLIENT_SECRET        = aws_ssm_parameter.pomerium_client_secret.arn
     POMERIUM_GOOGLE_CLIENT_ID     = aws_ssm_parameter.pomerium_google_client_id.arn
@@ -52,7 +41,7 @@ data "template_file" "pomerium_sso_proxy_auth_container_definition" {
 }
 
 resource "aws_ecs_task_definition" "pomerium_sso_proxy_auth" {
-  family                   = "pomerium_sso_proxy_auth"
+  family                   = local.pomerium_sso_proxy_auth_service_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
@@ -72,7 +61,7 @@ resource "aws_ecs_task_definition" "pomerium_sso_proxy_auth" {
 }
 
 resource "aws_cloudwatch_log_group" "pomerium_sso_proxy_auth" {
-  name              = "/aws/ecs/pomerium_sso_proxy_auth"
+  name              = "/aws/ecs/${local.pomerium_sso_proxy_auth_service_name}"
   retention_in_days = 14
 
   tags = {
