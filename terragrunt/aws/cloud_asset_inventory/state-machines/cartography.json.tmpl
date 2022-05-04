@@ -30,7 +30,6 @@
             "Type": "Task",
             "Resource": "arn:aws:states:::ecs:runTask.sync",
             "Parameters": {
-              "LaunchType": "FARGATE",
               "Cluster": "${CARTOGRAPHY_CLUSTER}",
               "CapacityProviderStrategy": [
                 {
@@ -90,7 +89,6 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::ecs:runTask.sync",
       "Parameters": {
-        "LaunchType": "FARGATE",
         "Cluster" : "${NEO4J_INGESTOR_CLUSTER}",
         "CapacityProviderStrategy": [
           {
