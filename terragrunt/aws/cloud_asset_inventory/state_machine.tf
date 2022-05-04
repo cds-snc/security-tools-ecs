@@ -67,6 +67,11 @@ data "aws_iam_policy_document" "asset_inventory_cartography_state_machine_servic
       type        = "Service"
       identifiers = ["states.${var.region}.amazonaws.com"]
     }
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
   }
 }
 
