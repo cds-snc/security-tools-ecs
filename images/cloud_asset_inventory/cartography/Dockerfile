@@ -6,6 +6,10 @@ RUN apk add jq curl
 RUN mkdir -p /config
 WORKDIR /config
 
+COPY --chown=python:python docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+RUN chown -R python:python /config
+
 USER python
 RUN /usr/local/bin/python -m venv /home/python/venv
 ENV PATH="/home/python/venv/bin:${PATH}" \
@@ -13,11 +17,5 @@ ENV PATH="/home/python/venv/bin:${PATH}" \
 
 COPY --chown=python:python requirements.txt /home/python/cartography/requirements.txt
 RUN /home/python/venv/bin/pip install --no-cache-dir --requirement /home/python/cartography/requirements.txt
-
-USER root
-COPY --chown=python:python docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
-RUN chown -R python:python /config
-USER python
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
