@@ -52,8 +52,10 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/gh_plan_role
           role-session-name: TFPlan
           aws-region: ${{ env.AWS_REGION }}
+
       - name: Get current date to determine if secrets need to be rotated
         run: echo "TF_VAR_password_change_id=$(date +'%Y-%m')" >> $GITHUB_ENV
+        
       - name: Terragrunt plan software_asset_inventory
         if: ${{ steps.filter.outputs.software_asset_inventory == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2

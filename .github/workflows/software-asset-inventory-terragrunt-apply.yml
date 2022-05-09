@@ -56,6 +56,7 @@ jobs:
 
       - name: Get current date to determine if secrets need to be rotated
         run: echo "TF_VAR_password_change_id=$(date +'%Y-%m')" >> $GITHUB_ENV
+        
       - name: Terragrunt apply software asset inventory
         if: ${{ steps.filter.outputs.software_asset_inventory == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: "terragrunt/env/software_asset_inventory"
