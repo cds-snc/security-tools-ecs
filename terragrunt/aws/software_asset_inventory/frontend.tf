@@ -20,6 +20,12 @@ resource "aws_ecs_service" "dependencytrack_frontend" {
     security_groups = [aws_security_group.dependencytrack.id, module.dependencytrack_db.proxy_security_group_id]
     subnets         = module.vpc.private_subnet_ids
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 data "template_file" "dependencytrack_frontend_container_definition" {
@@ -46,9 +52,21 @@ resource "aws_ecs_task_definition" "dependencytrack_frontend" {
   task_role_arn      = aws_iam_role.dependencytrack_task_execution_role.arn
 
   container_definitions = data.template_file.dependencytrack_frontend_container_definition.rendered
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_cloudwatch_log_group" "dependencytrack_frontend" {
   name              = "/aws/ecs/${local.dependencytrack_frontend_service_name}"
   retention_in_days = 14
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }

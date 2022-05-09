@@ -18,6 +18,12 @@ resource "aws_lb" "dependencytrack" {
     prefix  = "lb_logs"
     enabled = true
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+    Product               = var.product_name
+  }
 }
 
 resource "aws_lb_target_group" "dependencytrack_api" {
