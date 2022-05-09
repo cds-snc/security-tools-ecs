@@ -76,6 +76,13 @@
                 }
               }
             },
+            "Retry": [
+              {
+                "ErrorEquals": ["States.TaskFailed"],
+                "IntervalSeconds": 120,
+                "MaxAttempts": 4
+              }
+            ],
             "End": true
           }
         }
@@ -108,7 +115,14 @@
             "SecurityGroups": ["${SECURITY_GROUPS}"],
             "Subnets": ["${SUBNETS}"]
           }
-        }
+        },
+        "Retry": [
+          {
+            "ErrorEquals": ["States.TaskFailed"],
+            "IntervalSeconds": 120,
+            "MaxAttempts": 4
+          }
+        ]
       },
       "End": true
     }
