@@ -88,24 +88,6 @@ data "aws_iam_policy_document" "dependencytrack_api_policies" {
       aws_efs_file_system.dependencytrack.arn
     ]
   }
-
-  statement {
-    sid       = "DenyNonSecureTransport"
-    effect    = "Deny"
-    actions   = ["*"]
-    resources = [aws_efs_file_system.dependencytrack.arn]
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values = [
-        "false"
-      ]
-    }
-  }
 }
 
 resource "aws_iam_policy" "dependencytrack_api_policies" {

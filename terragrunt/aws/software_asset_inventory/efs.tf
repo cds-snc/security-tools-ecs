@@ -36,3 +36,49 @@ resource "aws_efs_access_point" "dependencytrack" {
     Product               = var.product_name
   }
 }
+
+resource "aws_efs_file_system_policy" "dependencytrack" {
+  file_system_id = aws_efs_file_system.dependencytrack.id
+  policy         = data.aws_iam_policy_document.dependencytrack_efs_policy.json
+}
+
+data "aws_iam_policy_document" "dependencytrack_efs_policy" {
+  statement {
+    sid    = "AllowAccessThroughAccessPoint"
+    effect = "Allow"
+    actions = [
+      "elasticfilesystem:ClientMount",
+      "elasticfilesystem:ClientWrite",
+    ]
+    resources = [aws_efs_file_system.dependencytrack.arn]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "elasticfilesystem:AccessPointArn"
+      values = [
+        aws_efs_access_point.dependencytrack.arn
+      ]
+    }
+  }
+
+  statement {
+    sid       = "DenyNonSecureTransport"
+    effect    = "Deny"
+    actions   = ["*"]
+    resources = [aws_efs_file_system.dependencytrack.arn]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values = [
+        "false"
+      ]
+    }
+  }
+}
