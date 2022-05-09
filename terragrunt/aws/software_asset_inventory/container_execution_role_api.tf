@@ -85,7 +85,7 @@ data "aws_iam_policy_document" "dependencytrack_api_policies" {
       "elasticfilesystem:DescribeMountTargets",
     ]
     resources = [
-      aws_efs_file_system.dependency_track.arn
+      aws_efs_file_system.dependencytrack.arn
     ]
   }
 
@@ -93,7 +93,7 @@ data "aws_iam_policy_document" "dependencytrack_api_policies" {
     sid       = "DenyNonSecureTransport"
     effect    = "Deny"
     actions   = ["*"]
-    resources = [aws_efs_file_system.dependency_track.arn]
+    resources = [aws_efs_file_system.dependencytrack.arn]
     principals {
       type        = "AWS"
       identifiers = ["*"]
