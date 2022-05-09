@@ -76,6 +76,36 @@ data "aws_iam_policy_document" "dependencytrack_api_policies" {
       aws_ssm_parameter.dependencytrack_db_user.arn,
     ]
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "elasticfilesystem:ClientWrite",
+      "elasticfilesystem:ClientMount",
+      "elasticfilesystem:DescribeMountTargets",
+    ]
+    resources = [
+      aws_efs_file_system.dependency_track.arn
+    ]
+  }
+
+  statement {
+    sid       = "DenyNonSecureTransport"
+    effect    = "Deny"
+    actions   = ["*"]
+    resources = [aws_efs_file_system.dependency_track.arn]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values = [
+        "false"
+      ]
+    }
+  }
 }
 
 resource "aws_iam_policy" "dependencytrack_api_policies" {
