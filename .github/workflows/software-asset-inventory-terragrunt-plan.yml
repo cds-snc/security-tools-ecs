@@ -1,11 +1,11 @@
-name: "Terragrunt plan cloud asset inventory"
+name: "Terragrunt plan software asset inventory"
 
 on:
   workflow_dispatch:
   pull_request:
     paths:
-      - ".github/workflows/cloud-asset-inventory-terragrunt-plan.yml"
-      - "terragrunt/*/cloud_asset_inventory/**"
+      - ".github/workflows/software-asset-inventory-terragrunt-plan.yml"
+      - "terragrunt/*/software_asset_inventory/**"
       - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
 
@@ -38,11 +38,11 @@ jobs:
         id: filter
         with:
           filters: |
-            cloud_asset_inventory:
-              - 'terragrunt/aws/cloud_asset_inventory/**'
-              - 'terragrunt/env/cloud_asset_inventory/**'
+            software_asset_inventory:
+              - 'terragrunt/aws/software_asset_inventory/**'
+              - 'terragrunt/env/software_asset_inventory/**'
             common:
-              - '.github/workflows/cloud-asset-inventory-terragrunt-plan.yml'
+              - '.github/workflows/software-asset-inventory-terragrunt-plan.yml'
               - 'terragrunt/env/common/**'
               - 'terragrunt/env/terragrunt.hcl'
 
@@ -52,16 +52,16 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/gh_plan_role
           role-session-name: TFPlan
           aws-region: ${{ env.AWS_REGION }}
-          
+
       - name: Get current date to determine if secrets need to be rotated
         run: echo "TF_VAR_password_change_id=$(date +'%Y-%m')" >> $GITHUB_ENV
-
-      - name: Terragrunt plan cloud_asset_inventory
-        if: ${{ steps.filter.outputs.cloud_asset_inventory == 'true' || steps.filter.outputs.common == 'true' }}
+        
+      - name: Terragrunt plan software_asset_inventory
+        if: ${{ steps.filter.outputs.software_asset_inventory == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
-          directory: "terragrunt/env/cloud_asset_inventory"
+          directory: "terragrunt/env/software_asset_inventory"
           comment-delete: "true"
-          comment-title: "cloud_asset_inventory"
+          comment-title: "software_asset_inventory"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"

@@ -2,10 +2,9 @@ module "vpc" {
   source = "github.com/cds-snc/terraform-modules?ref=v2.0.2//vpc"
   name   = var.product_name
 
-  cidr            = var.cloud_asset_inventory_cidr # Reserve 1,022 IP addresses for VPC. 10.0.9.0/24 and 10.0.10.0/24 are flexible.
-  public_subnets  = ["10.0.8.0/24"]                # Reserve 254 IP addresses for public subnets
-  private_subnets = ["10.0.11.0/24"]               # Reserve 254 IP addresses for private subnets
-
+  cidr            = var.software_asset_inventory_cidr # Reserve 254 IP addresses for VPC
+  public_subnets  = ["10.0.12.0/26"]                  # Reserve 62 IP addresses for public subnets
+  private_subnets = ["10.0.12.128/26"]                # Reserve 62 IP addresses for private subnets
 
   high_availability = false
   enable_flow_log   = false
@@ -23,13 +22,12 @@ module "vpc" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# CREATE A SECURITY GROUP TO ALLOW ACCESS TO CARTOGRAPHY
+# CREATE A SECURITY GROUP TO ALLOW ACCESS TO DEPENDENCY TRACK
 # ---------------------------------------------------------------------------------------------------------------------
 
-resource "aws_security_group" "cartography" {
-  #checkov:skip=CKV2_AWS_5:This security group is used by the Cartography ECS tasks.
-  name        = "cartography"
-  description = "Allow inbound traffic to cartography load balancer"
+resource "aws_security_group" "dependencytrack" {
+  name        = "dependencytrack"
+  description = "Allow inbound traffic to dependencytrack load balancer"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
@@ -44,6 +42,14 @@ resource "aws_security_group" "cartography" {
     description = "Allow EFS traffic into mount target from ECS"
     from_port   = 2049
     to_port     = 2049
+    protocol    = "tcp"
+    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+  }
+
+  egress {
+    description = "Access to RDS Postgresql"
+    from_port   = 5432
+    to_port     = 5432
     protocol    = "tcp"
     cidr_blocks = module.vpc.private_subnet_cidr_blocks
   }
@@ -65,47 +71,38 @@ resource "aws_security_group" "cartography" {
   }
 
   egress {
-    description = "Outbound access to neo4j http"
-    from_port   = 7474
-    to_port     = 7474
+    description = "Outbound access to dependency track api"
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = module.vpc.private_subnet_cidr_blocks
     self        = true
   }
 
   ingress {
-    description = "Inbound access to neo4j http"
-    from_port   = 7474
-    to_port     = 7474
+    description = "Inbound access to dependency track api"
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
-    self        = true
-  }
-
-  ingress {
-    description = "Access to neo4j https"
-    from_port   = 7473
-    to_port     = 7473
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    cidr_blocks = concat(module.vpc.private_subnet_cidr_blocks, [var.sso_proxy_cidr])
     self        = true
   }
 
   egress {
-    description = "Outbound access to neo4j bolt"
-    from_port   = 7687
-    to_port     = 7687
+    description = "Outbound access to dependency track frontend"
+    from_port   = 8081
+    to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = module.vpc.private_subnet_cidr_blocks
     self        = true
   }
 
   ingress {
-    description = "Inbound access to neo4j bolt"
-    from_port   = 7687
-    to_port     = 7687
+    description = "Access to dependency track frontend"
+    from_port   = 8081
+    to_port     = 8081
     protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    cidr_blocks = concat(module.vpc.private_subnet_cidr_blocks, [var.sso_proxy_cidr])
     self        = true
   }
 

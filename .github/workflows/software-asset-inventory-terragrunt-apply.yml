@@ -1,11 +1,12 @@
-name: "Terragrunt plan cloud asset inventory"
+name: "Terragrunt apply software asset inventory"
 
 on:
-  workflow_dispatch:
-  pull_request:
+  push:
+    branches:
+      - main
     paths:
-      - ".github/workflows/cloud-asset-inventory-terragrunt-plan.yml"
-      - "terragrunt/*/cloud_asset_inventory/**"
+      - ".github/workflows/software-asset-inventory-terragrunt-apply.yml"
+      - "terragrunt/*/software_asset_inventory/**"
       - "terragrunt/*/common/**"
       - "terragrunt/env/terragrunt.hcl"
 
@@ -25,7 +26,7 @@ permissions:
   statuses: write
 
 jobs:
-  terragrunt-plan:
+  terragrunt-apply:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,30 +39,25 @@ jobs:
         id: filter
         with:
           filters: |
-            cloud_asset_inventory:
-              - 'terragrunt/aws/cloud_asset_inventory/**'
-              - 'terragrunt/env/cloud_asset_inventory/**'
+            software_asset_inventory:
+              - 'terragrunt/aws/software_asset_inventory/**'
+              - 'terragrunt/env/software_asset_inventory/**'
             common:
-              - '.github/workflows/cloud-asset-inventory-terragrunt-plan.yml'
+              - '.github/workflows/software-asset-inventory-terragrunt-apply.yml'
               - 'terragrunt/env/common/**'
               - 'terragrunt/env/terragrunt.hcl'
 
       - name: configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/gh_plan_role
-          role-session-name: TFPlan
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/gh_admin_role
+          role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
-          
+
       - name: Get current date to determine if secrets need to be rotated
         run: echo "TF_VAR_password_change_id=$(date +'%Y-%m')" >> $GITHUB_ENV
-
-      - name: Terragrunt plan cloud_asset_inventory
-        if: ${{ steps.filter.outputs.cloud_asset_inventory == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
-        with:
-          directory: "terragrunt/env/cloud_asset_inventory"
-          comment-delete: "true"
-          comment-title: "cloud_asset_inventory"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
+        
+      - name: Terragrunt apply software asset inventory
+        if: ${{ steps.filter.outputs.software_asset_inventory == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: "terragrunt/env/software_asset_inventory"
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve          
