@@ -76,16 +76,7 @@ resource "aws_security_group" "dependencytrack" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
-    self        = true
-  }
-
-  ingress {
-    description = "Access to dependency track frontend"
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    cidr_blocks = concat(module.vpc.private_subnet_cidr_blocks, [var.sso_proxy_cidr])
     self        = true
   }
 
@@ -95,6 +86,15 @@ resource "aws_security_group" "dependencytrack" {
     to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = module.vpc.private_subnet_cidr_blocks
+    self        = true
+  }
+
+  ingress {
+    description = "Access to dependency track frontend"
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = concat(module.vpc.private_subnet_cidr_blocks, [var.sso_proxy_cidr])
     self        = true
   }
 
