@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "dependencytrack_api" {
   cpu    = 4096
   memory = 16384
 
-  execution_role_arn = aws_iam_role.dependencytrack_container_execution_role.arn
+  execution_role_arn = aws_iam_role.dependencytrack_api_container_execution_role.arn
   task_role_arn      = aws_iam_role.dependencytrack_task_execution_role.arn
 
   container_definitions = data.template_file.dependencytrack_api_container_definition.rendered
