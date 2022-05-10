@@ -10,7 +10,7 @@ module "vpc" {
   enable_flow_log   = false
   block_ssh         = true
   block_rdp         = true
-  enable_eip        = true
+  enable_eip        = false
 
   allow_https_request_out          = true
   allow_https_request_out_response = true
