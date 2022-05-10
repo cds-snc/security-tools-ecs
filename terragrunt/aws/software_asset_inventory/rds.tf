@@ -6,7 +6,7 @@ module "dependencytrack_db" {
   engine         = "aurora-postgresql"
   engine_version = "13.6"
   instances      = 2
-  instance_class = "db.t3.small"
+  instance_class = "db.t3.medium"
   username       = aws_ssm_parameter.dependencytrack_db_user.value
   password       = aws_ssm_parameter.dependencytrack_db_password.value
 
